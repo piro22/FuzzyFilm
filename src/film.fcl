@@ -6,10 +6,15 @@ VAR_INPUT
     popolarita : REAL;   // Da 0 a 100 (milioni di views o index)
 END_VAR
 
+
 // 2. Definisci le variabili di output
 VAR_OUTPUT
     consiglio : REAL; // Da 0 a 10 (quanto te lo consiglio)
 END_VAR
+
+
+//-----------------------------------------------------------------------
+
 
 // 3. Fuzzificazione: trasforma i numeri in concetti linguistici
 FUZZIFY voto_critica
@@ -24,6 +29,7 @@ FUZZIFY popolarita
     TERM blockbuster := (70, 0) (100, 1);
 END_FUZZIFY
 
+
 // 4. Defuzzificazione: dal concetto linguistico al numero finale
 DEFUZZIFY consiglio
     TERM evitare := (0, 1) (3, 0);
@@ -34,6 +40,7 @@ DEFUZZIFY consiglio
 END_DEFUZZIFY
 
 // 5. Regole di inferenza (La logica vera e propria)
+// qui si cambiano i connettivi
 RULEBLOCK No1
     AND : MIN;
     ACT : MIN;
