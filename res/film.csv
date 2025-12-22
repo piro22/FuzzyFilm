@@ -1,0 +1,45 @@
+Titolo,Indice
+The Godfather,15
+Pulp Fiction,40
+Inception,60
+Avengers: Endgame,90
+Barbie,75
+Schindler's List,10
+Mad Max: Fury Road,95
+Interstellar,55
+The Hangover,80
+Parasite,30
+
+
+
+INPUT UTENTE
+1. intensità -> bassa - alta
+
+2. tempo a disposizione -> cortissimo - lungo
+
+3. emozioni post film -> felice/malinconico/teso/ispirato/rilassato/adrenalinico
+
+4. complessità narrativa -> semplice/lineare/intricato/cerebrale
+
+5. realismo/fantasia -> realistico/stilizzato/surreale/fantastico
+
+6. contenuti espliciti -> per_tutti/moderato/maturo/esplicito
+
+7. tono generale film -> dark/serio/bilanciato/leggero/comico
+
+
+
+INPUT FILM
+1. categoria film
+
+2. durata film
+
+3. finale
+
+4. complessità
+
+5. realismo -> da storia vera a fantasy
+
+6. PG rating
+
+7. tono film

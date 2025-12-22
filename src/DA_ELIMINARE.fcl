@@ -1,0 +1,94 @@
+FUNCTION_BLOCK calcolo_affinita
+
+// INPUT: Differenza tra richiesta Utente e Dati Film (convertiti in 0-10)
+VAR_INPUT
+    intensità
+    tempo_a_disposizione
+    intensita_emozioni_post_film
+    categoria_film
+    durata_film
+    finale_film
+END_VAR
+
+VAR_OUTPUT
+    affinita : REAL; // 0-1
+END_VAR
+
+
+
+// --- DEFINIZIONE TERMINI ---
+FUZZIFY intensità
+    TERM bassa := (0, 1) (2, 1) (4, 0);
+    TERM media := (2, 0) (4, 1) (5, 1) (7, 0);
+    TERM alta := (6, 0) (10, 1);
+END_FUZZIFY
+
+FUZZIFY tempo_a_disposizione
+    TERM poco := (0, 1) (2, 1) (3, 0);
+    TERM medio := (2, 0) (4, 1) (6, 0);
+    TERM tanto := (5, 0) (10, 1);
+END_FUZZIFY
+
+FUZZIFY intensita_emozioni_post_film
+    TERM nulla := (0, 1) (2, 1) (3, 0);
+    TERM media := (2, 0) (5, 1) (7, 0);
+    TERM alta := (6, 0) (10, 1);
+END_FUZZIFY
+
+FUZZIFY categoria_film
+    TERM documentario := (0, 1) (0.5, 1) (1, 0);
+    TERM drama := (1, 1) (1, 1.5) (2, 0);
+    TERM romance := (2, 1) (1, 2.5) (3, 0);
+    TERM commedia := (3, 1) (1, 3.5) (4, 0);
+    TERM thriller := (4, 1) (1, 4.5) (5, 0);
+    TERM horror := (5, 1) (1, 5.5) (6, 0);
+    TERM azione := (6, 1) (1, 6.5) (7, 0);
+    TERM avventura := (7, 1) (1, 7.5) (8, 0);
+    TERM sci-fi := (8, 1) (1, 8.5) (9, 0);
+    TERM fantasy := (9, 1) (1, 9.5) (10, 0);
+END_FUZZIFY
+
+FUZZIFY durata_film
+    TERM bassa := (0, 1) (30, 1) (70, 0);
+    TERM media := (60, 0) (70, 1) (90, 1) (140, 0);
+    TERM alta := (120, 0) (150, 1) (180, 0);
+    TERM altissima := (170, 0) (200, 1) (240, 1);
+END_FUZZIFY
+
+FUZZIFY finale_film
+    TERM lieto := (0, 1) (0.5, 1) (1, 0);
+    TERM triste := (1, 1) (1, 1.5) (2, 0);
+    TERM malinconico := (2, 1) (1, 2.5) (3, 0);
+    TERM teso := (3, 1) (1, 3.5) (4, 0);
+END_FUZZIFY
+
+
+
+DEFUZZIFY affinita
+    TERM scartare := (0, 1) (40, 0);
+    TERM considerare := (30, 0) (50, 1) (70, 0);
+    TERM imperdibile := (60, 0) (100, 1);
+    METHOD : COG;
+    DEFAULT := 0;
+END_DEFUZZIFY
+
+// --- REGOLE ---
+RULEBLOCK Rules
+    AND : MIN;
+    ACCU : MAX;
+
+    // Regola d'oro: Se tutto combacia -> Imperdibile
+    RULE 1 : IF diff_intensita IS nulla AND diff_tempo IS nulla AND diff_emozione IS nulla THEN affinita IS imperdibile;
+
+    // Se l'emozione è quella giusta, perdoniamo la durata o l'intensità diversa
+    RULE 2 : IF diff_emozione IS nulla AND diff_intensita IS media THEN affinita IS considerare;
+    RULE 3 : IF diff_emozione IS nulla AND diff_tempo IS media THEN affinita IS considerare;
+
+    // Se l'emozione è completamente diversa, scartiamo quasi sempre
+    RULE 4 : IF diff_emozione IS alta THEN affinita IS scartare;
+
+    // Se l'intensità è completamente diversa (es. volevo Action, mi dai un Documentario), scarta
+    RULE 5 : IF diff_intensita IS alta THEN affinita IS scartare;
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK

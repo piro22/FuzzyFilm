@@ -1,46 +1,193 @@
 import net.sourceforge.jFuzzyLogic.FIS;
 import net.sourceforge.jFuzzyLogic.plot.JFuzzyChart;
 import javax.swing.JOptionPane;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
+
     public static void main(String[] args) {
 
-        String fileName = "src/film.fcl"; // Controlla il percorso esatto!
-        FIS fis = FIS.load(fileName, true);
+        // CARICAMENTO FILM DA CSV
+        List<Film> databaseFilm = new ArrayList<>();
+        String csvFile = "res/movies.csv"; // Assicurati che sia nella root del progetto
 
-        if (fis == null) {
-            System.err.println("Impossibile caricare il file: '" + fileName + "'");
+        try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+
+                if(line.startsWith("Titolo")) continue;
+
+                String[] values = line.split(",");
+
+                databaseFilm.add(new Film(values[0], values[1], Integer.parseInt(values[2]), values[3]));
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Errore lettura CSV: " + e.getMessage());
             return;
         }
 
-        // Input rapido tramite finestre di dialogo (GUI minimale)
-        String inputCritica = JOptionPane.showInputDialog("Inserisci voto critica (0-10):");
-        String inputPop = JOptionPane.showInputDialog("Inserisci popolarità (0-100):");
+        // LOGICA FUZZY PER INTENSITA
+        String fileName = "src/intensita.fcl";
+        FIS fisIntensita = FIS.load(fileName, true);
+        if (fisIntensita == null) {
+            System.err.println("Errore caricamento FCL");
+            return;
+        }
 
-        try {
-            double critica = Double.parseDouble(inputCritica);
-            double popolarita = Double.parseDouble(inputPop);
+        // Input Utente intensita
+        String intensita = JOptionPane.showInputDialog("Che intensita vuoi che abbia? (0-10)");
+        //String tempo = JOptionPane.showInputDialog("Quanto tempo hai a disposizione? (0-10)");
+        //String intensitaPostFilm = JOptionPane.showInputDialog("Quanto emozionante vuoi il finale? (0-10)");
+        fisIntensita.setVariable("intensita", Double.parseDouble(intensita));
 
-            // Imposta le variabili
-            fis.setVariable("voto_critica", critica);
-            fis.setVariable("popolarita", popolarita);
+        String topIntensita = "";
+        Double top = 0.0;
+        List<Double> scoreIntensita = new ArrayList<>();
+        for (int i = 0; i<databaseFilm.size(); i++) {
+            String categoria = databaseFilm.get(i).getCategoria();
 
-            // Valuta
-            fis.evaluate();
+            fisIntensita.setVariable("categoria_film", numCategoria(categoria));
+            fisIntensita.evaluate();
+            double idealIndex = fisIntensita.getVariable("affinita").getValue();
+            scoreIntensita.add(idealIndex);
+            System.out.println(databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex);
+            if (idealIndex > top) {top = idealIndex; topIntensita = databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex;}
+        }
+        System.out.print("Miglior film in base all'intensità: ");
+        System.out.println(topIntensita + "\n");
 
-            // Ottieni il risultato
-            double risultato = fis.getVariable("consiglio").getValue();
 
-            // Mostra il grafico delle variabili (utile per il prof!)
-            JFuzzyChart.get().chart(fis.getFunctionBlock("consigliatore").getVariable("consiglio"), true);
+        // LOGICA FUZZY PER TEMPO---------------------------------------------------------------------------------------
+        fileName = "src/tempo.fcl";
+        FIS fisTempo = FIS.load(fileName, true);
+        if (fisTempo == null) {
+            System.err.println("Errore caricamento FCL");
+            return;
+        }
 
-            // Output finale
-            String verdetto = "Il punteggio di raccomandazione è: " + String.format("%.2f", risultato) + "/10";
-            JOptionPane.showMessageDialog(null, verdetto);
+        // Input Utente tempo
+        String tempo = JOptionPane.showInputDialog("Quanto tempo hai a disposizione? (0-10)");
+        //String intensitaPostFilm = JOptionPane.showInputDialog("Quanto emozionante vuoi il finale? (0-10)");
+        fisTempo.setVariable("tempo_a_disposizione", Double.parseDouble(tempo));
 
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Errore nell'inserimento dei dati.");
+        String topTempo = "";
+        Double top1 = 0.0;
+        List<Double> scoreTempo = new ArrayList<>();
+        for (int i = 0; i<databaseFilm.size(); i++) {
+            int durata = databaseFilm.get(i).getDurata();
+
+            fisTempo.setVariable("durata_film", durata);
+            fisTempo.evaluate();
+            double idealIndex = fisTempo.getVariable("affinita").getValue();
+            scoreTempo.add(idealIndex);
+            System.out.println(databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex);
+            if (idealIndex > top1) {top1 = idealIndex; topTempo = databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex;}
+        }
+        System.out.print("Miglior film in base alla durata: ");
+        System.out.println(topTempo + "\n");
+
+
+
+        // LOGICA FUZZY PER FINALE---------------------------------------------------------------------------------------
+        fileName = "src/finale.fcl";
+        FIS fisFinale = FIS.load(fileName, true);
+        if (fisFinale == null) {
+            System.err.println("Errore caricamento FCL");
+            return;
+        }
+
+        // Input Utente tempo
+        String intensitaPostFilm = JOptionPane.showInputDialog("Quanto emozionante vuoi il finale? (0-10)");
+        fisFinale.setVariable("intensita_emozioni_post_film", Double.parseDouble(intensitaPostFilm));
+
+        String topFinale = "";
+        Double top2 = 0.0;
+        List<Double> scoreFinale = new ArrayList<>();
+        for (int i = 0; i<databaseFilm.size(); i++) {
+            String finale = databaseFilm.get(i).getFinale();
+
+            fisFinale.setVariable("finale_film", numFinale(finale));
+            fisFinale.evaluate();
+            double idealIndex = fisFinale.getVariable("affinita").getValue();
+            scoreFinale.add(idealIndex);
+            System.out.println(databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex);
+            if (idealIndex > top2) {top2 = idealIndex; topFinale = databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex;}
+        }
+        System.out.print("Miglior film in base al finale: ");
+        System.out.println(topFinale + "\n");
+
+
+        // CALCOLO FILM MIGLIORE
+        int indexBest = 0;
+        Double bestScore = 0.0;
+        for (int i = 0; i<databaseFilm.size(); i++) {
+            Double intensitaTemp = scoreIntensita.get(i);
+            Double tempoTemp = scoreTempo.get(i);
+            Double finaleTemp = scoreFinale.get(i);
+
+            if(intensitaTemp < 0.2 || tempoTemp < 0.2 || finaleTemp < 0.2) {
+                databaseFilm.get(i).setScore(0.0);
+            } else {
+                databaseFilm.get(i).setScore((intensitaTemp + tempoTemp + finaleTemp) / 3);
+                if (databaseFilm.get(i).getScore() > bestScore){ indexBest = i; bestScore = databaseFilm.get(i).getScore();}
+            }
+
+            System.out.println(databaseFilm.get(i).toString());
+        }
+        System.out.print("\n\n Miglior film in base a tutti i parametri: " + databaseFilm.get(indexBest).toString());
+
+    }
+
+    private static double numCategoria(String categoria) {
+        if (categoria == null) {
+            throw new IllegalArgumentException("Categoria nulla");
+        }
+
+        switch (categoria.toLowerCase()) {
+            case "drammatico":
+                return 0.5;
+            case "animazione":
+                return 1.5;
+            case "romance":
+                return 2.5;
+            case "commedia":
+                return 3.5;
+            case "thriller":
+                return 4.5;
+            case "horror":
+                return 5.5;
+            case "azione":
+                return 6.5;
+            case "avventura":
+                return 7.5;
+            case "scifi":
+                return 8.5;
+            case "fantasy":
+                return 9.5;
+            default:
+                return 0.0; // valore neutro se sconosciuta
         }
     }
 
+    private static double numFinale(String categoria) {
+        if (categoria == null) {
+            throw new IllegalArgumentException("Categoria nulla");
+        }
+
+        switch (categoria.toLowerCase()) {
+            case "lieto":
+                return 0.5;
+            case "triste":
+                return 1.5;
+            case "malinconico":
+                return 2.5;
+            case "teso":
+                return 3.5;
+            default:
+                return 0.0; // valore neutro se sconosciuta
+        }
+    }
 }

@@ -1,0 +1,99 @@
+FUNCTION_BLOCK calcolo_affinita
+
+// INPUT: Differenza tra richiesta Utente e Dati Film (convertiti in 0-10)
+VAR_INPUT
+    intensita_emozioni_post_film : REAL;
+    finale_film : REAL;
+END_VAR
+
+VAR_OUTPUT
+    affinita : REAL;
+END_VAR
+
+
+// --- DEFINIZIONE TERMINI ---
+FUZZIFY intensita_emozioni_post_film
+    TERM nulla := (0, 1) (2, 1) (3, 0);
+    TERM media := (2, 0) (5, 1) (7, 0);
+    TERM alta := (6, 0) (10, 1);
+END_FUZZIFY
+
+FUZZIFY finale_film
+    TERM lieto := (0, 1) (0.5, 1) (1, 0);
+    TERM triste := (1, 1) (1.5, 1) (2, 0);
+    TERM malinconico := (2, 1) (2.5, 1) (3, 0);
+    TERM teso := (3, 1) (3.5, 1) (4, 0);
+END_FUZZIFY
+
+
+
+DEFUZZIFY affinita
+    TERM scartare := (0, 1) (0.4, 0);
+    TERM considerare := (0.3, 0) (0.5, 1) (0.7, 0);
+    TERM imperdibile := (0.6, 0) (1, 1);
+    METHOD : COG;
+    DEFAULT := 0;
+END_DEFUZZIFY
+
+
+RULEBLOCK Rules
+    AND : MIN;
+    ACCU : MAX;
+
+    // -----------------------------------------------------------
+    // CASO 1: UTENTE VUOLE EMOZIONI "NULLA" (Vuole uscire leggero)
+    // -----------------------------------------------------------
+    // Se non voglio emozioni forti, il lieto fine è l'unica salvezza.
+    RULE 1 : IF intensita_emozioni_post_film IS nulla
+             AND finale_film IS lieto
+             THEN affinita IS imperdibile;
+
+    // Il malinconico è accettabile ma non ideale.
+    RULE 2 : IF intensita_emozioni_post_film IS nulla
+             AND finale_film IS malinconico
+             THEN affinita IS considerare;
+
+    // Se voglio relax, il triste o il teso mi rovinano la serata.
+    RULE 3 : IF intensita_emozioni_post_film IS nulla
+             AND (finale_film IS triste OR finale_film IS teso)
+             THEN affinita IS scartare;
+
+
+    // -----------------------------------------------------------
+    // CASO 2: UTENTE VUOLE EMOZIONI "MEDIA" (Vuole una storia vera)
+    // -----------------------------------------------------------
+    // Il malinconico (realistico) e il teso (avvincente) sono il top per chi cerca coinvolgimento.
+    RULE 4 : IF intensita_emozioni_post_film IS media
+             AND (finale_film IS malinconico OR finale_film IS teso)
+             THEN affinita IS imperdibile;
+
+    // Il lieto fine va bene (considerare), ma forse è banale.
+    // Il triste va bene (considerare), ma forse è troppo pesante.
+    RULE 5 : IF intensita_emozioni_post_film IS media
+             AND (finale_film IS lieto OR finale_film IS triste)
+             THEN affinita IS considerare;
+
+
+    // -----------------------------------------------------------
+    // CASO 3: UTENTE VUOLE EMOZIONI "ALTA" (Vuole lo shock/pianto)
+    // -----------------------------------------------------------
+    // Se cerco emozioni forti, voglio il triste (pianto) o il teso (shock).
+    RULE 6 : IF intensita_emozioni_post_film IS alta
+             AND (finale_film IS triste OR finale_film IS teso)
+             THEN affinita IS imperdibile;
+
+    // Il malinconico è un po' leggero per me che voglio emozioni forti.
+    RULE 7 : IF intensita_emozioni_post_film IS alta
+             AND finale_film IS malinconico
+             THEN affinita IS considerare;
+
+    // Se voglio emozioni forti e finisce tutto "vissero felici e contenti", mi annoio.
+    RULE 8 : IF intensita_emozioni_post_film IS alta
+             AND finale_film IS lieto
+             THEN affinita IS scartare;
+
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK
+
+END_FUNCTION_BLOCK
