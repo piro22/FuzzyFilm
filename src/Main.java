@@ -12,7 +12,7 @@ public class Main {
 
         // CARICAMENTO FILM DA CSV
         List<Film> databaseFilm = new ArrayList<>();
-        String csvFile = "res/movies.csv"; // Assicurati che sia nella root del progetto
+        String csvFile = "FuzzyFilm-master/res/movies.csv"; // Assicurati che sia nella root del progetto
 
         try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
             String line;
@@ -29,8 +29,65 @@ public class Main {
             return;
         }
 
-        // LOGICA FUZZY PER INTENSITA
-        String fileName = "src/intensita.fcl";
+        // LOGICA FUZZY PER TONE---------------------------------------------------------------------
+        String fileName5 = "FuzzyFilm-master/src/tone.fcl";
+        FIS fisTone = FIS.load(fileName5, true);
+        if (fisTone == null) {
+            System.err.println("Errore caricamento FCL");
+            return;
+        }
+
+        String[] options = {"dark", "serio", "leggero", "bilanciato", "comico"};
+        String tono = (String) JOptionPane.showInputDialog(
+                null,
+                "Scegli il tono del film:",
+                "Input Tono",
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]
+        );
+
+        //trasforma input stringa in int
+        double tonoNum = 0.0;
+        switch (tono.toLowerCase()) {
+            case "dark": tonoNum = 1.0; break;
+            case "serio": tonoNum = 3.0; break;
+            case "leggero": tonoNum = 5.0; break;
+            case "bilanciato": tonoNum = 7.0; break;
+            case "comico": tonoNum = 9.0; break;
+        }
+
+        //prende input dell'utente e la passa al fuzzy
+        fisTone.setVariable("tone", tonoNum);
+
+        String topTone = "";
+        Double topT = 0.0;
+        //salvo gli score di ogni film
+        List<Double> scoreTone = new ArrayList<>();
+
+        for (int i = 0; i < databaseFilm.size(); i++) {
+            //recupero il tono di ciascun film
+            String tonoFilm = databaseFilm.get(i).getTono();
+            //chiamo la funzione che trasforma da stringa a int e poi la passo all'input fuzzy
+            fisTone.setVariable("tono_film", numTono(tonoFilm));
+            //attivo il fuzzy
+            fisTone.evaluate();
+            //recupero output e lo salvo
+            double idealIndex = fisTone.getVariable("affinita").getValue();
+            scoreTone.add(idealIndex);
+            System.out.println(databaseFilm.get(i).getTitolo() + " -> score tono: " + idealIndex);
+            //per capire il migliore
+            if (idealIndex > topT) {
+                topT = idealIndex;
+                topTone = databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex;
+            }
+        }
+        System.out.print("Miglior film in base al tono: ");
+        System.out.println(topTone + "\n");
+
+        // LOGICA FUZZY PER INTENSITA----------------------------------------------------------------
+        String fileName = "FuzzyFilm-master/src/intensita.fcl";
         FIS fisIntensita = FIS.load(fileName, true);
         if (fisIntensita == null) {
             System.err.println("Errore caricamento FCL");
@@ -60,8 +117,64 @@ public class Main {
         System.out.println(topIntensita + "\n");
 
 
+        //LOGICA FUZZY VIOLENZA --------------------------------------------------------------------
+        String fileName6 = "FuzzyFilm-master/src/violenza.fcl";
+        FIS fisViolenza = FIS.load(fileName6, true);
+        if (fisViolenza == null) {
+            System.err.println("Errore caricamento FCL");
+            return;
+        }
+
+        String[] optionsViolenza = {"per_tutti", "moderato", "esplicito"};
+
+        String violenza = (String) JOptionPane.showInputDialog(
+                null,
+                "Che livello di violenza accetti?",
+                "Input Violenza",
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                optionsViolenza,
+                optionsViolenza[0]
+        );
+
+        //trasforma input stringa in int
+        double violenzaNum = 0.0;
+        switch (violenza.toLowerCase()) {
+            case "per_tutti": violenzaNum = 1.0; break;
+            case "moderato": violenzaNum = 5.0; break;
+            case "esplicito": violenzaNum = 9.0; break;
+        }
+
+        //prende input dell'utente e la passa al fuzzy
+        fisViolenza.setVariable("violenza", violenzaNum);
+
+        String topViolenza = "";
+        Double topV = 0.0;
+        //salvo gli score di ogni film
+        List<Double> scoreViolenza = new ArrayList<>();
+
+        for (int i = 0; i < databaseFilm.size(); i++) {
+            String violenzaFilm = databaseFilm.get(i).getContenutiEspliciti();
+            //trasformo la stringa che leggo dal db in int e poi collego all'input fuzzy
+            fisViolenza.setVariable("violenza_film", numViolenza(violenzaFilm));
+            //attivo il fuzzy
+            fisViolenza.evaluate();
+            //ottengo il risultato
+            double idealIndex = fisViolenza.getVariable("affinita").getValue();
+            scoreViolenza.add(idealIndex);
+            System.out.println(databaseFilm.get(i).getTitolo() + " -> score violenza: " + idealIndex);
+            //serve per capire qual è il rate migliore
+            if (idealIndex > topV) {
+                topV = idealIndex;
+                topViolenza = databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex;
+            }
+        }
+        System.out.print("Miglior film in base alla violenza: ");
+        System.out.println(topViolenza + "\n");
+
+
         // LOGICA FUZZY PER TEMPO---------------------------------------------------------------------------------------
-        fileName = "src/tempo.fcl";
+        fileName = "FuzzyFilm-master/src/tempo.fcl";
         FIS fisTempo = FIS.load(fileName, true);
         if (fisTempo == null) {
             System.err.println("Errore caricamento FCL");
@@ -92,7 +205,7 @@ public class Main {
 
 
         // LOGICA FUZZY PER FINALE---------------------------------------------------------------------------------------
-        fileName = "src/finale.fcl";
+        fileName = "FuzzyFilm-master/src/finale.fcl";
         FIS fisFinale = FIS.load(fileName, true);
         if (fisFinale == null) {
             System.err.println("Errore caricamento FCL");
@@ -120,10 +233,8 @@ public class Main {
         System.out.println(topFinale + "\n");
 
 
-
-
         // LOGICA FUZZY PER COMPLESSITA---------------------------------------------------------------------------------------
-        fileName = "src/complessitaNarrativa.fcl";
+        fileName = "FuzzyFilm-master/src/complessitaNarrativa.fcl";
         FIS fisComplessita = FIS.load(fileName, true);
         if (fisComplessita == null) {
             System.err.println("Errore caricamento FCL");
@@ -153,7 +264,7 @@ public class Main {
 
 
         // LOGICA FUZZY PER REALISMO---------------------------------------------------------------------------------------
-        fileName = "src/realismo.fcl";
+        fileName = "FuzzyFilm-master/src/realismo.fcl";
         FIS fisRealismo = FIS.load(fileName, true);
         if (fisRealismo == null) {
             System.err.println("Errore caricamento FCL");
@@ -191,18 +302,24 @@ public class Main {
             Double finaleTemp = scoreFinale.get(i);
             Double complessitaTemp = scoreComplessita.get(i);
             Double realismoTemp = scoreRealismo.get(i);
+            Double tonoTemp = scoreTone.get(i);
+            Double violenzaTemp = scoreViolenza.get(i);
 
-            if(intensitaTemp < 0.2 || tempoTemp < 0.2 || finaleTemp < 0.2 || complessitaTemp < 0.2 || realismoTemp < 0.2) {
+            if(intensitaTemp < 0.2 || tempoTemp < 0.2 || finaleTemp < 0.2 ||
+                    complessitaTemp < 0.2 || realismoTemp < 0.2 || tonoTemp < 0.2 || violenzaTemp < 0.2) {
                 databaseFilm.get(i).setScore(0.0);
             } else {
-                databaseFilm.get(i).setScore((intensitaTemp + tempoTemp + finaleTemp + complessitaTemp + realismoTemp) / 5);
-                if (databaseFilm.get(i).getScore() > bestScore){ indexBest = i; bestScore = databaseFilm.get(i).getScore();}
+                databaseFilm.get(i).setScore((intensitaTemp + tempoTemp + finaleTemp +
+                        complessitaTemp + realismoTemp + tonoTemp + violenzaTemp) / 7);
+                if (databaseFilm.get(i).getScore() > bestScore) {
+                    indexBest = i;
+                    bestScore = databaseFilm.get(i).getScore();
+                }
             }
 
             System.out.println(databaseFilm.get(i).toString());
         }
-        System.out.print("\n\n Miglior film in base a tutti i parametri: " + databaseFilm.get(indexBest).toString());
-
+        System.out.print("\n\nMiglior film in base a tutti i parametri: " + databaseFilm.get(indexBest).toString());
     }
 
 
@@ -291,6 +408,45 @@ public class Main {
                 return 3.5;
             default:
                 return 0.0; // valore neutro se sconosciuta
+        }
+    }
+
+
+    private static double numTono(String tono) {
+        if (tono == null) {
+            throw new IllegalArgumentException("Tono nullo");
+        }
+
+        switch (tono.toLowerCase()) {
+            case "dark":
+                return 1.0;
+            case "serio":
+                return 3.0;
+            case "leggero":
+                return 5.0;
+            case "bilanciato":
+                return 7.0;
+            case "comico":
+                return 9.0;
+            default:
+                return 5.0; //valore neutro
+        }
+    }
+
+    private static double numViolenza(String violenza) {
+        if (violenza == null) {
+            throw new IllegalArgumentException("Violenza nulla");
+        }
+
+        switch (violenza.toLowerCase()) {
+            case "per_tutti":
+                return 1.0;
+            case "moderato":
+                return 5.0;
+            case "esplicito":
+                return 9.0;
+            default:
+                return 5.0; // valore neutro se sconosciuto DA CAMBIARE?
         }
     }
 }
