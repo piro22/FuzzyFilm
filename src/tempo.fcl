@@ -13,9 +13,9 @@ END_VAR
 
 // --- DEFINIZIONE TERMINI ---
 FUZZIFY tempo_a_disposizione
-    TERM poco := (0, 1) (2, 1) (3, 0);
-    TERM medio := (2, 0) (4, 1) (6, 0);
-    TERM tanto := (5, 0) (10, 1);
+    TERM poco := (0, 1) (48, 1) (72, 0);
+    TERM medio := (48, 0) (96, 1) (144, 0);
+    TERM tanto := (120, 0) (180, 1) (240, 1);
 END_FUZZIFY
 
 FUZZIFY durata_film

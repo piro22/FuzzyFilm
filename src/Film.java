@@ -3,14 +3,22 @@ public class Film {
     String categoria;
     int durata;
     String finale;
+    String complessita;
+    String realismo;
+    String contenutiEspliciti;
+    String tono;
     Double score;
 
 
-    public Film(String titolo, String categoria, int indice, String finale) {
+    public Film(String titolo, String categoria, int indice, String finale, String complessita, String realismo, String contenutiEspliciti, String tono) {
         this.titolo = titolo;
         this.categoria = categoria;
         this.durata = indice;
         this.finale = finale;
+        this.complessita = complessita;
+        this.realismo = realismo;
+        this.contenutiEspliciti = contenutiEspliciti;
+        this.tono = tono;
     }
 
     public String getTitolo() {
@@ -27,6 +35,22 @@ public class Film {
 
     public String getFinale() {
         return finale;
+    }
+
+    public String getComplessita() {
+        return complessita;
+    }
+
+    public String getRealismo() {
+        return realismo;
+    }
+
+    public String getContenutiEspliciti() {
+        return contenutiEspliciti;
+    }
+
+    public String getTono() {
+        return tono;
     }
 
     public Double getScore() {
