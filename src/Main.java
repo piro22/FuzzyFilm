@@ -12,7 +12,8 @@ public class Main {
 
         // CARICAMENTO FILM DA CSV
         List<Film> databaseFilm = new ArrayList<>();
-        String csvFile = "FuzzyFilm-master/res/movies.csv"; // Assicurati che sia nella root del progetto
+        //String csvFile = "FuzzyFilm-master/res/movies.csv";
+        String csvFile = "res/movies.csv";
 
         try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
             String line;
@@ -20,7 +21,7 @@ public class Main {
 
                 if(line.startsWith("Titolo")) continue;
 
-                String[] values = line.split(";");
+                String[] values = line.trim().split(";");
 
                 databaseFilm.add(new Film(values[0], values[1], Integer.parseInt(values[2]), values[3], values[4], values[5], values[6], values[7]));
             }
@@ -30,14 +31,15 @@ public class Main {
         }
 
         // LOGICA FUZZY PER TONE---------------------------------------------------------------------
-        String fileName5 = "FuzzyFilm-master/src/tone.fcl";
-        FIS fisTone = FIS.load(fileName5, true);
+        //String fileName = "FuzzyFilm-master/src/tone.fcl";
+        String fileName = "src/tone.fcl";
+        FIS fisTone = FIS.load(fileName, true);
         if (fisTone == null) {
             System.err.println("Errore caricamento FCL");
             return;
         }
 
-        String[] options = {"dark", "serio", "leggero", "bilanciato", "comico"};
+        String[] options = {"dark", "serio", "leggero", "bilanciato", "comico", "inquietante"};
         String tono = (String) JOptionPane.showInputDialog(
                 null,
                 "Scegli il tono del film:",
@@ -49,6 +51,8 @@ public class Main {
         );
 
         //trasforma input stringa in int
+        double tonoNum = numTono(tono); //c'è gia il metodo in fondo al codice
+        /*
         double tonoNum = 0.0;
         switch (tono.toLowerCase()) {
             case "dark": tonoNum = 1.0; break;
@@ -56,7 +60,8 @@ public class Main {
             case "leggero": tonoNum = 5.0; break;
             case "bilanciato": tonoNum = 7.0; break;
             case "comico": tonoNum = 9.0; break;
-        }
+            case "inquietante": tonoNum = 11.0; break;
+        }*/
 
         //prende input dell'utente e la passa al fuzzy
         fisTone.setVariable("tone", tonoNum);
@@ -86,8 +91,11 @@ public class Main {
         System.out.print("Miglior film in base al tono: ");
         System.out.println(topTone + "\n");
 
+
+
         // LOGICA FUZZY PER INTENSITA----------------------------------------------------------------
-        String fileName = "FuzzyFilm-master/src/intensita.fcl";
+        //fileName = "FuzzyFilm-master/src/intensita.fcl";
+        fileName = "src/intensita.fcl";
         FIS fisIntensita = FIS.load(fileName, true);
         if (fisIntensita == null) {
             System.err.println("Errore caricamento FCL");
@@ -118,8 +126,9 @@ public class Main {
 
 
         //LOGICA FUZZY VIOLENZA --------------------------------------------------------------------
-        String fileName6 = "FuzzyFilm-master/src/violenza.fcl";
-        FIS fisViolenza = FIS.load(fileName6, true);
+        //fileName = "FuzzyFilm-master/src/violenza.fcl";
+        fileName = "src/violenza.fcl";
+        FIS fisViolenza = FIS.load(fileName, true);
         if (fisViolenza == null) {
             System.err.println("Errore caricamento FCL");
             return;
@@ -138,12 +147,15 @@ public class Main {
         );
 
         //trasforma input stringa in int
+        double violenzaNum = numViolenza(violenza); //c'è gia il metodo in fondo al codice
+        /*
         double violenzaNum = 0.0;
         switch (violenza.toLowerCase()) {
             case "per_tutti": violenzaNum = 1.0; break;
             case "moderato": violenzaNum = 5.0; break;
             case "esplicito": violenzaNum = 9.0; break;
         }
+        */
 
         //prende input dell'utente e la passa al fuzzy
         fisViolenza.setVariable("violenza", violenzaNum);
@@ -174,7 +186,8 @@ public class Main {
 
 
         // LOGICA FUZZY PER TEMPO---------------------------------------------------------------------------------------
-        fileName = "FuzzyFilm-master/src/tempo.fcl";
+        //fileName = "FuzzyFilm-master/src/tempo.fcl";
+        fileName = "src/tempo.fcl";
         FIS fisTempo = FIS.load(fileName, true);
         if (fisTempo == null) {
             System.err.println("Errore caricamento FCL");
@@ -205,14 +218,15 @@ public class Main {
 
 
         // LOGICA FUZZY PER FINALE---------------------------------------------------------------------------------------
-        fileName = "FuzzyFilm-master/src/finale.fcl";
+        //fileName = "FuzzyFilm-master/src/finale.fcl";
+        fileName = "src/finale.fcl";
         FIS fisFinale = FIS.load(fileName, true);
         if (fisFinale == null) {
             System.err.println("Errore caricamento FCL");
             return;
         }
 
-        // Input Utente tempo
+        // Input Utente finale
         String intensitaPostFilm = JOptionPane.showInputDialog("Quanto emozionante vuoi il finale? (0-10)");
         fisFinale.setVariable("intensita_emozioni_post_film", Double.parseDouble(intensitaPostFilm));
 
@@ -234,7 +248,8 @@ public class Main {
 
 
         // LOGICA FUZZY PER COMPLESSITA---------------------------------------------------------------------------------------
-        fileName = "FuzzyFilm-master/src/complessitaNarrativa.fcl";
+        //fileName = "FuzzyFilm-master/src/complessitaNarrativa.fcl";
+        fileName = "src/complessitaNarrativa.fcl";
         FIS fisComplessita = FIS.load(fileName, true);
         if (fisComplessita == null) {
             System.err.println("Errore caricamento FCL");
@@ -264,14 +279,15 @@ public class Main {
 
 
         // LOGICA FUZZY PER REALISMO---------------------------------------------------------------------------------------
-        fileName = "FuzzyFilm-master/src/realismo.fcl";
+        //fileName = "FuzzyFilm-master/src/complessitaNarrativa.fcl";
+        fileName = "src/complessitaNarrativa.fcl";
         FIS fisRealismo = FIS.load(fileName, true);
         if (fisRealismo == null) {
             System.err.println("Errore caricamento FCL");
             return;
         }
 
-        // Input Utente tempo
+        // Input Utente realismo
         String realismo = JOptionPane.showInputDialog("Quanto vuoi fantasioso il film? (0-10)");
 
         fisRealismo.setVariable("fantasia", Double.parseDouble(realismo));
@@ -350,7 +366,7 @@ public class Main {
             case "fantasy":
                 return 9.5;
             default:
-                return 0.0; // valore neutro se sconosciuta
+                return 3.5; // valore neutro è commedia
         }
     }
 
@@ -369,7 +385,7 @@ public class Main {
             case "teso":
                 return 3.5;
             default:
-                return 0.0; // valore neutro se sconosciuta
+                return 1.0; // valore neutro tra lieto e triste
         }
     }
 
@@ -388,7 +404,7 @@ public class Main {
             case "cerebrale":
                 return 3.5;
             default:
-                return 0.0; // valore neutro se sconosciuta
+                return 2.0; // valore neutro è tra lineare e intricato
         }
     }
 
@@ -407,7 +423,7 @@ public class Main {
             case "fantasy":
                 return 3.5;
             default:
-                return 0.0; // valore neutro se sconosciuta
+                return 2.0; // valore neutro è tra stilizzato e surreale
         }
     }
 
@@ -428,8 +444,10 @@ public class Main {
                 return 7.0;
             case "comico":
                 return 9.0;
+            case "inquietante":
+                return 11.0;
             default:
-                return 5.0; //valore neutro
+                return 7.0; //valore neutro va bene bilanciato
         }
     }
 
@@ -446,7 +464,7 @@ public class Main {
             case "esplicito":
                 return 9.0;
             default:
-                return 5.0; // valore neutro se sconosciuto DA CAMBIARE?
+                return 5.0; // valore neutro va bene moderato
         }
     }
 }
