@@ -1,0 +1,117 @@
+FUNCTION_BLOCK calcolo_affinita
+
+// input tono dell'utente e tono del film
+VAR_INPUT
+    tone : REAL;
+    tono_film : REAL;
+END_VAR
+
+VAR_OUTPUT
+    affinita : REAL;
+END_VAR
+
+
+FUZZIFY tone
+    TERM dark := (0, 1) (1, 1) (2, 0);
+    TERM serio := (1.5, 0) (2.5, 1) (3.5, 0);
+    TERM bilanciato := (3, 0) (4, 1) (5, 0);
+    TERM leggero := (4.5, 0) (5.5, 1) (6.5, 0);
+    TERM comico := (6, 0) (7, 1) (8, 0);
+    TERM epico := (7.5, 0) (8.5, 1) (9.5, 0);
+    TERM inquietante := (9, 0) (10, 1) (11, 1);
+END_FUZZIFY
+
+FUZZIFY tono_film
+    TERM dark := (0, 1) (1, 1) (2, 0);
+    TERM serio := (1.5, 0) (2.5, 1) (3.5, 0);
+    TERM bilanciato := (3, 0) (4, 1) (5, 0);
+    TERM leggero := (4.5, 0) (5.5, 1) (6.5, 0);
+    TERM comico := (6, 0) (7, 1) (8, 0);
+    TERM epico := (7.5, 0) (8.5, 1) (9.5, 0);
+    TERM inquietante := (9, 0) (10, 1) (11, 1);
+END_FUZZIFY
+
+DEFUZZIFY affinita
+    TERM scartare := (0, 1) (0.4, 0);
+    TERM considerare := (0.3, 0) (0.5, 1) (0.7, 0);
+    TERM imperdibile := (0.6, 0) (1, 1);
+    METHOD : COG;
+    DEFAULT := 0;
+END_DEFUZZIFY
+
+RULEBLOCK Rules
+    AND : MIN;
+    ACCU : MAX;
+
+    // TONO DARK
+    RULE 1 : IF tone IS dark AND tono_film IS dark
+             THEN affinita IS imperdibile;
+
+    RULE 2 : IF tone IS dark AND (tono_film IS serio OR tono_film IS inquietante)
+             THEN affinita IS considerare;
+
+    RULE 3 : IF tone IS dark AND (tono_film IS leggero OR tono_film IS bilanciato OR tono_film IS comico OR tono_film IS epico)
+             THEN affinita IS scartare;
+
+    // TONO SERIO
+    RULE 4 : IF tone IS serio AND tono_film IS serio
+             THEN affinita IS imperdibile;
+
+    RULE 5 : IF tone IS serio AND (tono_film IS dark OR tono_film IS bilanciato OR tono_film IS epico)
+             THEN affinita IS considerare;
+
+    RULE 6 : IF tone IS serio AND (tono_film IS leggero OR tono_film IS comico OR tono_film IS inquietante)
+             THEN affinita IS scartare;
+
+    // TONO BILANCIATO
+    RULE 7 : IF tone IS bilanciato AND tono_film IS bilanciato
+             THEN affinita IS imperdibile;
+
+    RULE 8 : IF tone IS bilanciato AND (tono_film IS serio OR tono_film IS leggero)
+             THEN affinita IS considerare;
+
+    RULE 9 : IF tone IS bilanciato AND (tono_film IS dark OR tono_film IS comico OR tono_film IS epico OR tono_film IS inquietante)
+             THEN affinita IS scartare;
+
+    // TONO LEGGERO
+    RULE 10 : IF tone IS leggero AND tono_film IS leggero
+              THEN affinita IS imperdibile;
+
+    RULE 11 : IF tone IS leggero AND (tono_film IS bilanciato OR tono_film IS comico)
+              THEN affinita IS considerare;
+
+    RULE 12 : IF tone IS leggero AND (tono_film IS dark OR tono_film IS serio OR tono_film IS epico OR tono_film IS inquietante)
+              THEN affinita IS scartare;
+
+    // TONO COMICO
+    RULE 13 : IF tone IS comico AND tono_film IS comico
+              THEN affinita IS imperdibile;
+
+    RULE 14 : IF tone IS comico AND (tono_film IS leggero OR tono_film IS bilanciato)
+              THEN affinita IS considerare;
+
+    RULE 15 : IF tone IS comico AND (tono_film IS dark OR tono_film IS serio OR tono_film IS epico OR tono_film IS inquietante)
+              THEN affinita IS scartare;
+
+    // TONO EPICO
+    RULE 16 : IF tone IS epico AND tono_film IS epico
+              THEN affinita IS imperdibile;
+
+    RULE 17 : IF tone IS epico AND (tono_film IS serio OR tono_film IS bilanciato)
+              THEN affinita IS considerare;
+
+    RULE 18 : IF tone IS epico AND (tono_film IS dark OR tono_film IS leggero OR tono_film IS comico OR tono_film IS inquietante)
+              THEN affinita IS scartare;
+
+    // TONO INQUIETANTE
+    RULE 19 : IF tone IS inquietante AND tono_film IS inquietante
+              THEN affinita IS imperdibile;
+
+    RULE 20 : IF tone IS inquietante AND (tono_film IS dark OR tono_film IS serio)
+              THEN affinita IS considerare;
+
+    RULE 21 : IF tone IS inquietante AND (tono_film IS leggero OR tono_film IS bilanciato OR tono_film IS comico OR tono_film IS epico)
+              THEN affinita IS scartare;
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK
