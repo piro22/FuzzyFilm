@@ -39,7 +39,7 @@ public class Main {
             return;
         }
 
-        String[] options = {"dark", "serio", "leggero", "bilanciato", "comico", "inquietante"};
+        String[] options = {"dark", "serio", "bilanciato", "leggero", "comico", "epico", "inquietante"};
         String tono = (String) JOptionPane.showInputDialog(
                 null,
                 "Scegli il tono del film:",
@@ -134,7 +134,7 @@ public class Main {
             return;
         }
 
-        String[] optionsViolenza = {"per_tutti", "moderato", "esplicito"};
+        String[] optionsViolenza = {"per_tutti", "lieve", "moderato", "forte", "estremo"};
 
         String violenza = (String) JOptionPane.showInputDialog(
                 null,
@@ -147,15 +147,8 @@ public class Main {
         );
 
         //trasforma input stringa in int
-        double violenzaNum = numViolenza(violenza); //c'è gia il metodo in fondo al codice
-        /*
-        double violenzaNum = 0.0;
-        switch (violenza.toLowerCase()) {
-            case "per_tutti": violenzaNum = 1.0; break;
-            case "moderato": violenzaNum = 5.0; break;
-            case "esplicito": violenzaNum = 9.0; break;
-        }
-        */
+        double violenzaNum = numViolenza(violenza); //c'è il metodo in fondo al codice
+
 
         //prende input dell'utente e la passa al fuzzy
         fisViolenza.setVariable("violenza", violenzaNum);
@@ -280,7 +273,7 @@ public class Main {
 
         // LOGICA FUZZY PER REALISMO---------------------------------------------------------------------------------------
         //fileName = "FuzzyFilm-master/src/complessitaNarrativa.fcl";
-        fileName = "src/complessitaNarrativa.fcl";
+        fileName = "src/realismo.fcl";
         FIS fisRealismo = FIS.load(fileName, true);
         if (fisRealismo == null) {
             System.err.println("Errore caricamento FCL");
@@ -434,20 +427,14 @@ public class Main {
         }
 
         switch (tono.toLowerCase()) {
-            case "dark":
-                return 1.0;
-            case "serio":
-                return 3.0;
-            case "leggero":
-                return 5.0;
-            case "bilanciato":
-                return 7.0;
-            case "comico":
-                return 9.0;
-            case "inquietante":
-                return 11.0;
-            default:
-                return 7.0; //valore neutro va bene bilanciato
+            case "dark": return 1.0;
+            case "serio": return 2.5;
+            case "bilanciato": return 4.0;
+            case "leggero": return 5.5;
+            case "comico": return 7.0;
+            case "epico": return 8.5;
+            case "inquietante": return 10.0;
+            default: return 4.0; //valore neutro va bene bilanciato
         }
     }
 
@@ -457,14 +444,12 @@ public class Main {
         }
 
         switch (violenza.toLowerCase()) {
-            case "per_tutti":
-                return 1.0;
-            case "moderato":
-                return 5.0;
-            case "esplicito":
-                return 9.0;
-            default:
-                return 5.0; // valore neutro va bene moderato
+            case "per_tutti": return 1.0;
+            case "lieve": return 3.0;
+            case "moderato": return 5.5;
+            case "forte": return 7.5;
+            case "estremo": return 9.0;
+            default: return 5.5; // valore neutro va bene moderato
         }
     }
 }
