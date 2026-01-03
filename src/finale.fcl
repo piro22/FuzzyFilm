@@ -14,15 +14,15 @@ END_VAR
 // --- DEFINIZIONE TERMINI ---
 FUZZIFY intensita_emozioni_post_film
     TERM nulla := (0, 1) (2, 1) (3, 0);
-    TERM media := (2, 0) (5, 1) (7, 0);
-    TERM alta := (6, 0) (10, 1);
+    TERM media := (2, 0) (4, 1) (6, 1) (8, 0);
+    TERM alta := (6, 0) (8, 1) (10, 1);
 END_FUZZIFY
 
 FUZZIFY finale_film
     TERM lieto := (0, 1) (0.5, 1) (1, 0);
-    TERM triste := (1, 1) (1.5, 1) (2, 0);
-    TERM malinconico := (2, 1) (2.5, 1) (3, 0);
-    TERM teso := (3, 1) (3.5, 1) (4, 0);
+    TERM triste := (1, 0) (1.5, 1) (2, 0);
+    TERM malinconico := (2, 0) (2.5, 1) (3, 0);
+    TERM teso := (3, 0) (3.5, 1) (4, 0);
 END_FUZZIFY
 
 

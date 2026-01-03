@@ -20,10 +20,10 @@ FUZZIFY complessita
 END_FUZZIFY
 
 FUZZIFY complessita_film
-    TERM semplice := (0, 1) (0.5, 1) (1, 0);
-    TERM lineare := (1, 1) (1.5, 1) (2, 0);
-    TERM intricata := (2, 1) (2.5, 1) (3, 0);
-    TERM cerebrale := (3, 1) (3.5, 1) (4, 0);
+    TERM semplice := (0, 1) (1, 1) (2, 0);
+    TERM lineare := (2, 0) (3, 1) (4.5, 0);
+    TERM intricata := (3.5, 0) (5, 1) (6, 0);
+    TERM cerebrale := (6, 0) (7, 1) (8, 1);
 END_FUZZIFY
 
 

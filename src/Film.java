@@ -1,4 +1,4 @@
-public class Film {
+public class Film implements Comparable<Film>{
     String titolo;
     String categoria;
     int durata;
@@ -63,12 +63,22 @@ public class Film {
 
     @Override
     public String toString() {
-        return "Film{" +
-                "titolo='" + titolo + '\'' +
+        return titolo +
                 ", categoria='" + categoria + '\'' +
                 ", durata=" + durata +
                 ", finale='" + finale + '\'' +
-                ", score=" + score +
-                '}';
+                ", complessita='" + complessita + '\'' +
+                ", realismo='" + realismo + '\'' +
+                ", contenutiEspliciti='" + contenutiEspliciti + '\'' +
+                ", tono='" + tono + '\'' +
+                ", score=" + score;
+    }
+
+    @Override
+    public int compareTo(Film other) {
+        Double myScore = (this.score != null) ? this.score : 0.0;
+        Double otherScore = (other.score != null) ? other.score : 0.0;
+
+        return Double.compare(otherScore, myScore);
     }
 }

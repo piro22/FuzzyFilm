@@ -1,10 +1,16 @@
 import net.sourceforge.jFuzzyLogic.FIS;
 import net.sourceforge.jFuzzyLogic.plot.JFuzzyChart;
-import javax.swing.JOptionPane;
+import net.sourceforge.jFuzzyLogic.rule.Variable;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+
+import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.awt.Dimension;
 
 public class Main {
 
@@ -19,7 +25,7 @@ public class Main {
             String line;
             while ((line = br.readLine()) != null) {
 
-                if(line.startsWith("Titolo")) continue;
+                if (line.startsWith("Titolo")) continue;
 
                 String[] values = line.trim().split(";");
 
@@ -30,6 +36,15 @@ public class Main {
             return;
         }
 
+        //Se volgio visualizzare i grafici
+        int rispostaGrafici = JOptionPane.showConfirmDialog(
+                null,
+                "Vuoi visualizzare i grafici della logica Fuzzy?",
+                "Debug Grafici",
+                JOptionPane.YES_NO_OPTION
+        );
+
+
         // LOGICA FUZZY PER TONE---------------------------------------------------------------------
         //String fileName = "FuzzyFilm-master/src/tone.fcl";
         String fileName = "src/tone.fcl";
@@ -38,6 +53,11 @@ public class Main {
             System.err.println("Errore caricamento FCL");
             return;
         }
+
+        if(rispostaGrafici==0){
+            gestisciGrafici(fisTone, "Tono");
+        }
+
 
         String[] options = {"dark", "serio", "bilanciato", "leggero", "comico", "epico", "inquietante"};
         String tono = (String) JOptionPane.showInputDialog(
@@ -102,6 +122,10 @@ public class Main {
             return;
         }
 
+        if(rispostaGrafici==0){
+            gestisciGrafici(fisIntensita, "Intensita");
+        }
+
         // Input Utente intensita
         String intensita = JOptionPane.showInputDialog("Che intensita vuoi che abbia? (0-10)");
 
@@ -132,6 +156,10 @@ public class Main {
         if (fisViolenza == null) {
             System.err.println("Errore caricamento FCL");
             return;
+        }
+
+        if(rispostaGrafici==0){
+            gestisciGrafici(fisViolenza, "Violenza");
         }
 
         String[] optionsViolenza = {"per_tutti", "lieve", "moderato", "forte", "estremo"};
@@ -187,6 +215,10 @@ public class Main {
             return;
         }
 
+        if(rispostaGrafici==0){
+            gestisciGrafici(fisTempo, "Tempo");
+        }
+
         // Input Utente tempo
         String tempo = JOptionPane.showInputDialog("Quanto tempo hai a disposizione? (0-240 minuti)");
 
@@ -219,6 +251,10 @@ public class Main {
             return;
         }
 
+        if(rispostaGrafici==0){
+            gestisciGrafici(fisFinale, "Finale");
+        }
+
         // Input Utente finale
         String intensitaPostFilm = JOptionPane.showInputDialog("Quanto emozionante vuoi il finale? (0-10)");
         fisFinale.setVariable("intensita_emozioni_post_film", Double.parseDouble(intensitaPostFilm));
@@ -247,6 +283,10 @@ public class Main {
         if (fisComplessita == null) {
             System.err.println("Errore caricamento FCL");
             return;
+        }
+
+        if(rispostaGrafici==0){
+            gestisciGrafici(fisComplessita, "Complessita");
         }
 
         // Input Utente complessita
@@ -278,6 +318,10 @@ public class Main {
         if (fisRealismo == null) {
             System.err.println("Errore caricamento FCL");
             return;
+        }
+
+        if(rispostaGrafici==0){
+            gestisciGrafici(fisRealismo, "Realismo");
         }
 
         // Input Utente realismo
@@ -326,9 +370,17 @@ public class Main {
                 }
             }
 
-            System.out.println(databaseFilm.get(i).toString());
+            //System.out.println(databaseFilm.get(i).toString());
         }
-        System.out.print("\n\nMiglior film in base a tutti i parametri: " + databaseFilm.get(indexBest).toString());
+        //System.out.print("\n\nMiglior film in base a tutti i parametri: " + databaseFilm.get(indexBest).toString());
+
+        Collections.sort(databaseFilm);
+        System.out.println("\n--- CLASSIFICA FILM ---");
+        for (Film f : databaseFilm) {
+            if(f.getScore() > 0) { //non mostro quelli con score nullo
+                System.out.println(f);
+            }
+        }
     }
 
 
@@ -389,15 +441,15 @@ public class Main {
 
         switch (complessita.toLowerCase()) {
             case "semplice":
-                return 0.5;
+                return 1.0;
             case "lineare":
-                return 1.5;
+                return 3.0;
             case "intricata":
-                return 2.5;
+                return 5.0;
             case "cerebrale":
-                return 3.5;
+                return 7.0;
             default:
-                return 2.0; // valore neutro è tra lineare e intricato
+                return 4.0; // valore neutro è tra lineare e intricato
         }
     }
 
@@ -444,12 +496,41 @@ public class Main {
         }
 
         switch (violenza.toLowerCase()) {
-            case "per_tutti": return 1.0;
+            case "pertutti": return 1.0;
             case "lieve": return 3.0;
-            case "moderato": return 5.5;
-            case "forte": return 7.5;
+            case "moderato": return 5.0;
+            case "esplicito": return 7.0;
             case "estremo": return 9.0;
-            default: return 5.5; // valore neutro va bene moderato
+            default: return 5.0; // valore neutro va bene moderato
+        }
+    }
+
+
+    public static void gestisciGrafici(FIS fis, String nomeFis) {
+        if (fis == null) return;
+
+        // 2. DOMANDA SPECIFICA
+        int sceltaSpecifica = JOptionPane.showConfirmDialog(
+                null,
+                "Vuoi visualizzare i grafici per: " + nomeFis + "?",
+                "Debug: " + nomeFis,
+                JOptionPane.YES_NO_OPTION
+        );
+
+        // 3. VISUALIZZAZIONE
+        if (sceltaSpecifica == JOptionPane.YES_OPTION) {
+            // Poiché non possiamo estrarre i grafici singolarmente per unirli,
+            // usiamo il metodo standard per mostrare tutto il blocco funzionale.
+            // A seconda della versione, potrebbe aprire finestre separate o una unica.
+            JFuzzyChart.get().chart(fis);
+
+            // ALTERNATIVA: Se la riga sopra non ti mostra tutto, usa questo ciclo
+            // per forzare l'apertura di ogni variabile (Tono, Tono_Film, Affinità):
+        /*
+        for (net.sourceforge.jFuzzyLogic.rule.Variable var : fis.getFunctionBlock(null).variables()) {
+            JFuzzyChart.get().chart(var, var.getDefuzzifier(), true);
+        }
+        */
         }
     }
 }
