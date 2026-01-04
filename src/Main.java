@@ -1,6 +1,6 @@
 import net.sourceforge.jFuzzyLogic.FIS;
 import net.sourceforge.jFuzzyLogic.plot.JFuzzyChart;
-import net.sourceforge.jFuzzyLogic.rule.Variable;
+import net.sourceforge.jFuzzyLogic.rule.*;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 
@@ -13,6 +13,8 @@ import java.util.List;
 import java.awt.Dimension;
 
 public class Main {
+
+    private static final double SOGLIA = 0.2;
 
     public static void main(String[] args) {
 
@@ -60,7 +62,7 @@ public class Main {
 
 
         String[] options = {"dark", "serio", "bilanciato", "leggero", "comico", "epico", "inquietante"};
-        String tono = (String) JOptionPane.showInputDialog(
+        String TONO_USER = (String) JOptionPane.showInputDialog(
                 null,
                 "Scegli il tono del film:",
                 "Input Tono",
@@ -71,17 +73,7 @@ public class Main {
         );
 
         //trasforma input stringa in int
-        double tonoNum = numTono(tono); //c'è gia il metodo in fondo al codice
-        /*
-        double tonoNum = 0.0;
-        switch (tono.toLowerCase()) {
-            case "dark": tonoNum = 1.0; break;
-            case "serio": tonoNum = 3.0; break;
-            case "leggero": tonoNum = 5.0; break;
-            case "bilanciato": tonoNum = 7.0; break;
-            case "comico": tonoNum = 9.0; break;
-            case "inquietante": tonoNum = 11.0; break;
-        }*/
+        double tonoNum = numTono(TONO_USER); //c'è gia il metodo in fondo al codice
 
         //prende input dell'utente e la passa al fuzzy
         fisTone.setVariable("tone", tonoNum);
@@ -127,10 +119,8 @@ public class Main {
         }
 
         // Input Utente intensita
-        String intensita = JOptionPane.showInputDialog("Che intensita vuoi che abbia? (0-10)");
-
-
-        fisIntensita.setVariable("intensita", Double.parseDouble(intensita));
+        String INTENSITA_USER = JOptionPane.showInputDialog("Che intensita vuoi che abbia? (0-10)");
+        fisIntensita.setVariable("intensita", Double.parseDouble(INTENSITA_USER));
 
         String topIntensita = "";
         Double top = 0.0;
@@ -164,7 +154,7 @@ public class Main {
 
         String[] optionsViolenza = {"per_tutti", "lieve", "moderato", "forte", "estremo"};
 
-        String violenza = (String) JOptionPane.showInputDialog(
+        String VIOLENZA_USER = (String) JOptionPane.showInputDialog(
                 null,
                 "Che livello di violenza accetti?",
                 "Input Violenza",
@@ -175,7 +165,7 @@ public class Main {
         );
 
         //trasforma input stringa in int
-        double violenzaNum = numViolenza(violenza); //c'è il metodo in fondo al codice
+        double violenzaNum = numViolenza(VIOLENZA_USER); //c'è il metodo in fondo al codice
 
 
         //prende input dell'utente e la passa al fuzzy
@@ -220,9 +210,9 @@ public class Main {
         }
 
         // Input Utente tempo
-        String tempo = JOptionPane.showInputDialog("Quanto tempo hai a disposizione? (0-240 minuti)");
+        String TEMPO_USER = JOptionPane.showInputDialog("Quanto tempo hai a disposizione? (0-240 minuti)");
 
-        fisTempo.setVariable("tempo_a_disposizione", Double.parseDouble(tempo));
+        fisTempo.setVariable("tempo_a_disposizione", Double.parseDouble(TEMPO_USER));
 
         String topTempo = "";
         Double top1 = 0.0;
@@ -256,8 +246,8 @@ public class Main {
         }
 
         // Input Utente finale
-        String intensitaPostFilm = JOptionPane.showInputDialog("Quanto emozionante vuoi il finale? (0-10)");
-        fisFinale.setVariable("intensita_emozioni_post_film", Double.parseDouble(intensitaPostFilm));
+        String FINALE_USER = JOptionPane.showInputDialog("Quanto emozionante vuoi il finale? (0-10)");
+        fisFinale.setVariable("intensita_emozioni_post_film", Double.parseDouble(FINALE_USER));
 
         String topFinale = "";
         Double top2 = 0.0;
@@ -290,9 +280,9 @@ public class Main {
         }
 
         // Input Utente complessita
-        String complessita = JOptionPane.showInputDialog("Quanto complessa vuoi la trama? (0-10)");
+        String COMPLESSITA_USER = JOptionPane.showInputDialog("Quanto complessa vuoi la trama? (0-10)");
 
-        fisComplessita.setVariable("complessita", Double.parseDouble(complessita));
+        fisComplessita.setVariable("complessita", Double.parseDouble(COMPLESSITA_USER));
 
         String topComplessita = "";
         Double top3 = 0.0;
@@ -325,9 +315,9 @@ public class Main {
         }
 
         // Input Utente realismo
-        String realismo = JOptionPane.showInputDialog("Quanto vuoi fantasioso il film? (0-10)");
+        String REALISMO_USER = JOptionPane.showInputDialog("Quanto vuoi fantasioso il film? (0-10)");
 
-        fisRealismo.setVariable("fantasia", Double.parseDouble(realismo));
+        fisRealismo.setVariable("fantasia", Double.parseDouble(REALISMO_USER));
 
         String topRealismo = "";
         Double top4 = 0.0;
@@ -358,8 +348,8 @@ public class Main {
             Double tonoTemp = scoreTone.get(i);
             Double violenzaTemp = scoreViolenza.get(i);
 
-            if(intensitaTemp < 0.2 || tempoTemp < 0.2 || finaleTemp < 0.2 ||
-                    complessitaTemp < 0.2 || realismoTemp < 0.2 || tonoTemp < 0.2 || violenzaTemp < 0.2) {
+            if(intensitaTemp < SOGLIA || tempoTemp < SOGLIA || finaleTemp < SOGLIA ||
+                    complessitaTemp < SOGLIA || realismoTemp < SOGLIA || tonoTemp < SOGLIA || violenzaTemp < SOGLIA) {
                 databaseFilm.get(i).setScore(0.0);
             } else {
                 databaseFilm.get(i).setScore((intensitaTemp + tempoTemp + finaleTemp +
@@ -376,11 +366,16 @@ public class Main {
 
         Collections.sort(databaseFilm);
         System.out.println("\n--- CLASSIFICA FILM ---");
+        int i = 1;
         for (Film f : databaseFilm) {
             if(f.getScore() > 0) { //non mostro quelli con score nullo
-                System.out.println(f);
+                System.out.println(i + ". " + f);
+                i++;
             }
         }
+
+        Film BEST = databaseFilm.get(0);
+        creaGraficiBestResult(BEST, TONO_USER, INTENSITA_USER, VIOLENZA_USER, TEMPO_USER, FINALE_USER, COMPLESSITA_USER, REALISMO_USER);
     }
 
 
@@ -532,5 +527,116 @@ public class Main {
         }
         */
         }
+    }
+
+
+    private static void creaGraficiBestResult(Film BEST, String TONO_USER, String INTENSITA_USER, String VIOLENZA_USER, String TEMPO_USER,
+                                              String FINALE_USER, String COMPLESSITA_USER, String REALISMO_USER) {
+
+        String fileName = "src/tone.fcl";
+        FIS fisTone = FIS.load(fileName, true);
+        if (fisTone == null) {
+            System.err.println("Errore caricamento FCL");
+            return;
+        }
+
+        fisTone.setVariable("tone", numTono(TONO_USER));
+        fisTone.setVariable("tono_film", numTono(BEST.getTono()));
+        fisTone.evaluate();
+
+        RuleBlock ruleBlock = fisTone.getFunctionBlock("calcolo_affinita").getFuzzyRuleBlock("Rules");
+
+        System.out.println("\n--- Analisi Regole Attive Tono ---");
+
+        for (Rule r : ruleBlock.getRules()) {
+            // Il degreeOfSupport è il valore (0.0 - 1.0) che "taglia" il grafico di uscita
+            double level = r.getDegreeOfSupport();
+
+            if(level > 0){
+                System.out.println("La regola si è attivata con forza: " + level);
+                System.out.println("Regola: " + r);
+
+                // QUI HAI I DATI PER IL GRAFICO 1:
+                // 1. La forma della curva è data dal conseguente della regola (es. 'Good')
+                // 2. L'altezza massima della curva (il taglio) è 'level'
+                // Se usi JFreeChart, disegneresti la funzione di appartenenza 'Good'
+                // applicando un Math.min(y, level).
+            }
+        }
+        Variable outputVariable = fisTone.getFunctionBlock("calcolo_affinita").getVariable("affinita");
+        JFuzzyChart.get().chart(outputVariable, outputVariable.getDefuzzifier(), true);
+
+
+
+
+        fileName = "src/intensita.fcl";
+        FIS fisIntensita = FIS.load(fileName, true);
+        if (fisIntensita == null) {
+            System.err.println("Errore caricamento FCL");
+            return;
+        }
+
+        fisIntensita.setVariable("intensita", Double.parseDouble(INTENSITA_USER));
+        fisIntensita.setVariable("categoria_film", numCategoria(BEST.getCategoria()));
+        fisIntensita.evaluate();
+
+        ruleBlock = fisIntensita.getFunctionBlock("calcolo_affinita").getFuzzyRuleBlock("Rules");
+
+        System.out.println("\n--- Analisi Regole Attive Intensita ---");
+
+        for (Rule r : ruleBlock.getRules()) {
+            // Il degreeOfSupport è il valore (0.0 - 1.0) che "taglia" il grafico di uscita
+            double level = r.getDegreeOfSupport();
+
+            if(level > 0){
+                System.out.println("La regola si è attivata con forza: " + level);
+                System.out.println("Regola: " + r);
+
+                // QUI HAI I DATI PER IL GRAFICO 1:
+                // 1. La forma della curva è data dal conseguente della regola (es. 'Good')
+                // 2. L'altezza massima della curva (il taglio) è 'level'
+                // Se usi JFreeChart, disegneresti la funzione di appartenenza 'Good'
+                // applicando un Math.min(y, level).
+            }
+        }
+        Variable outputVariable1 = fisIntensita.getFunctionBlock("calcolo_affinita").getVariable("affinita");
+        JFuzzyChart.get().chart(outputVariable1, outputVariable1.getDefuzzifier(), true);
+
+
+
+
+        fileName = "src/realismo.fcl";
+        FIS fisRealismo = FIS.load(fileName, true);
+        if (fisRealismo == null) {
+            System.err.println("Errore caricamento FCL");
+            return;
+        }
+
+        fisRealismo.setVariable("fantasia", numRealismo(REALISMO_USER));
+        fisRealismo.setVariable("fantasia_film", numRealismo(BEST.getRealismo()));
+        fisRealismo.evaluate();
+
+        ruleBlock = fisRealismo.getFunctionBlock("calcolo_affinita").getFuzzyRuleBlock("Rules");
+
+        System.out.println("\n--- Analisi Regole Attive Realismo ---");
+
+        for (Rule r : ruleBlock.getRules()) {
+            // Il degreeOfSupport è il valore (0.0 - 1.0) che "taglia" il grafico di uscita
+            double level = r.getDegreeOfSupport();
+
+            if(level > 0){
+                System.out.println("La regola si è attivata con forza: " + level);
+                System.out.println("Regola: " + r);
+
+                // QUI HAI I DATI PER IL GRAFICO 1:
+                // 1. La forma della curva è data dal conseguente della regola (es. 'Good')
+                // 2. L'altezza massima della curva (il taglio) è 'level'
+                // Se usi JFreeChart, disegneresti la funzione di appartenenza 'Good'
+                // applicando un Math.min(y, level).
+            }
+        }
+        Variable outputVariable2 = fisRealismo.getFunctionBlock("calcolo_affinita").getVariable("affinita");
+        JFuzzyChart.get().chart(outputVariable2, outputVariable2.getDefuzzifier(), true);
+
     }
 }
