@@ -26,576 +26,576 @@ public class Main {
 
         do {
 
-        // CARICAMENTO FILM DA CSV
-        List<Film> databaseFilm = new ArrayList<>();
-        //String csvFile = "FuzzyFilm-master/res/movies.csv";
-        String csvFile = "res/movies.csv";
+            // CARICAMENTO FILM DA CSV
+            List<Film> databaseFilm = new ArrayList<>();
+            //String csvFile = "FuzzyFilm-master/res/movies.csv";
+            String csvFile = "res/movies.csv";
 
-        try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
-            String line;
-            while ((line = br.readLine()) != null) {
+            try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
+                String line;
+                while ((line = br.readLine()) != null) {
 
-                if (line.startsWith("Titolo")) continue;
+                    if (line.startsWith("Titolo")) continue;
 
-                String[] values = line.trim().split(";");
+                    String[] values = line.trim().split(";");
 
-                databaseFilm.add(new Film(values[0], values[1], Integer.parseInt(values[2]), values[3], values[4], values[5], values[6], values[7]));
+                    databaseFilm.add(new Film(values[0], values[1], Integer.parseInt(values[2]), values[3], values[4], values[5], values[6], values[7]));
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Errore lettura CSV: " + e.getMessage());
+                return;
             }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Errore lettura CSV: " + e.getMessage());
-            return;
-        }
 
-        //Se volgio visualizzare i grafici
-        int rispostaGrafici = JOptionPane.showConfirmDialog(
-                null,
-                "Vuoi visualizzare i grafici della logica Fuzzy?",
-                "Debug Grafici",
-                JOptionPane.YES_NO_OPTION
-        );
-
-
-        // LOGICA FUZZY PER TONE---------------------------------------------------------------------
-        //String fileName = "FuzzyFilm-master/src/tone.fcl";
-        String fileName = "src/tone.fcl";
-        FIS fisTone = FIS.load(fileName, true);
-        if (fisTone == null) {
-            System.err.println("Errore caricamento FCL");
-            return;
-        }
-
-        if (rispostaGrafici == 0) {
-            gestisciGrafici(fisTone, "Tono");
-
-        }
-
-
-        String[] options = {"dark", "serio", "bilanciato", "leggero", "comico", "epico", "inquietante"};
-        String TONO_USER = "";
-
-        while(!Arrays.asList(options).contains(TONO_USER)){
-            TONO_USER = (String) JOptionPane.showInputDialog(
+            //Se volgio visualizzare i grafici
+            int rispostaGrafici = JOptionPane.showConfirmDialog(
                     null,
-                    "Scegli il tono del film:",
-                    "Input Tono",
-                    JOptionPane.QUESTION_MESSAGE,
-                    null,
-                    options,
-                    options[0]
+                    "Vuoi visualizzare i grafici della logica Fuzzy?",
+                    "Debug Grafici",
+                    JOptionPane.YES_NO_OPTION
             );
 
-            if (TONO_USER == null) {
-                System.out.println("Operazione annullata dall'utente.");
-                break; // O System.exit(0);
+
+            // LOGICA FUZZY PER TONE---------------------------------------------------------------------
+            //String fileName = "FuzzyFilm-master/src/tone.fcl";
+            String fileName = "src/tone.fcl";
+            FIS fisTone = FIS.load(fileName, true);
+            if (fisTone == null) {
+                System.err.println("Errore caricamento FCL");
+                return;
             }
-        }
 
+            if (rispostaGrafici == 0) {
+                gestisciGrafici(fisTone, "Tono");
 
-        try {
-            Thread.sleep(200);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-
-        chiudiFinestre();
-
-
-        //trasforma input stringa in int
-        double tonoNum = numTono(TONO_USER); //c'è gia il metodo in fondo al codice
-
-        //prende input dell'utente e la passa al fuzzy
-        fisTone.setVariable("tone", tonoNum);
-
-        String topTone = "";
-        Double topT = 0.0;
-        //salvo gli score di ogni film
-        List<Double> scoreTone = new ArrayList<>();
-
-        for (int i = 0; i < databaseFilm.size(); i++) {
-            //recupero il tono di ciascun film
-            String tonoFilm = databaseFilm.get(i).getTono();
-            //chiamo la funzione che trasforma da stringa a int e poi la passo all'input fuzzy
-            fisTone.setVariable("tono_film", numTono(tonoFilm));
-            //attivo il fuzzy
-            fisTone.evaluate();
-            //recupero output e lo salvo
-            double idealIndex = fisTone.getVariable("affinita_tono").getValue();
-            scoreTone.add(idealIndex);
-            System.out.println(databaseFilm.get(i).getTitolo() + " -> score tono: " + idealIndex);
-            //per capire il migliore
-            if (idealIndex > topT) {
-                topT = idealIndex;
-                topTone = databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex;
             }
-        }
-        System.out.print("Miglior film in base al tono: ");
-        System.out.println(topTone + "\n");
 
 
-        // LOGICA FUZZY PER INTENSITA----------------------------------------------------------------
-        //fileName = "FuzzyFilm-master/src/intensita.fcl";
-        fileName = "src/intensita.fcl";
-        FIS fisIntensita = FIS.load(fileName, true);
-        if (fisIntensita == null) {
-            System.err.println("Errore caricamento FCL");
-            return;
-        }
+            String[] options = {"dark", "serio", "bilanciato", "leggero", "comico", "epico", "inquietante"};
+            String TONO_USER = "";
 
-        if (rispostaGrafici == 0) {
-            gestisciGrafici(fisIntensita, "Intensita");
-        }
+            while(!Arrays.asList(options).contains(TONO_USER)){
+                TONO_USER = (String) JOptionPane.showInputDialog(
+                        null,
+                        "Scegli il tono del film:",
+                        "Input Tono",
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        options,
+                        options[0]
+                );
 
-        // Input Utente intensita
-        String INTENSITA_USER = "";
-        double intensitaFinale = -1.0; // Variabile dove salveremo il numero convertito
-        boolean isValido = false;      // Flag per controllare l'uscita dal ciclo
+                if (TONO_USER == null) {
+                    System.out.println("Operazione annullata dall'utente.");
+                    break; // O System.exit(0);
+                }
+            }
 
-        while (!isValido) {
-            INTENSITA_USER = JOptionPane.showInputDialog("Che intensità vuoi che abbia? (0.0 - 10.0)");
 
-            if (INTENSITA_USER == null) {
-                System.out.println("Operazione annullata.");
-                break;
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+
+            chiudiFinestre();
+
+
+            //trasforma input stringa in int
+            double tonoNum = numTono(TONO_USER); //c'è gia il metodo in fondo al codice
+
+            //prende input dell'utente e la passa al fuzzy
+            fisTone.setVariable("tone", tonoNum);
+
+            String topTone = "";
+            Double topT = 0.0;
+            //salvo gli score di ogni film
+            List<Double> scoreTone = new ArrayList<>();
+
+            for (int i = 0; i < databaseFilm.size(); i++) {
+                //recupero il tono di ciascun film
+                String tonoFilm = databaseFilm.get(i).getTono();
+                //chiamo la funzione che trasforma da stringa a int e poi la passo all'input fuzzy
+                fisTone.setVariable("tono_film", numTono(tonoFilm));
+                //attivo il fuzzy
+                fisTone.evaluate();
+                //recupero output e lo salvo
+                double idealIndex = fisTone.getVariable("affinita_tono").getValue();
+                scoreTone.add(idealIndex);
+                System.out.println(databaseFilm.get(i).getTitolo() + " -> score tono: " + idealIndex);
+                //per capire il migliore
+                if (idealIndex > topT) {
+                    topT = idealIndex;
+                    topTone = databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex;
+                }
+            }
+            System.out.print("Miglior film in base al tono: ");
+            System.out.println(topTone + "\n");
+
+
+            // LOGICA FUZZY PER INTENSITA----------------------------------------------------------------
+            //fileName = "FuzzyFilm-master/src/intensita.fcl";
+            fileName = "src/intensita.fcl";
+            FIS fisIntensita = FIS.load(fileName, true);
+            if (fisIntensita == null) {
+                System.err.println("Errore caricamento FCL");
+                return;
+            }
+
+            if (rispostaGrafici == 0) {
+                gestisciGrafici(fisIntensita, "Intensita");
+            }
+
+            // Input Utente intensita
+            String INTENSITA_USER = "";
+            double intensitaFinale = -1.0; // Variabile dove salveremo il numero convertito
+            boolean isValido = false;      // Flag per controllare l'uscita dal ciclo
+
+            while (!isValido) {
+                INTENSITA_USER = JOptionPane.showInputDialog("Che intensità vuoi che abbia? (0.0 - 10.0)");
+
+                if (INTENSITA_USER == null) {
+                    System.out.println("Operazione annullata.");
+                    break;
+                }
+
+                try {
+                    intensitaFinale = Double.parseDouble(INTENSITA_USER);
+
+                    if (intensitaFinale >= 0.0 && intensitaFinale <= 10.0) {
+                        isValido = true;
+                    } else {
+                        System.err.println("Not a valid Number");
+                    }
+
+                } catch (NumberFormatException e) {
+                    System.err.println("Nan");
+                }
+            }
+
+            fisIntensita.setVariable("intensita", Double.parseDouble(INTENSITA_USER));
+
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            chiudiFinestre();
+
+            String topIntensita = "";
+            Double top = 0.0;
+            List<Double> scoreIntensita = new ArrayList<>();
+            for (int i = 0; i < databaseFilm.size(); i++) {
+                String categoria = databaseFilm.get(i).getCategoria();
+
+                fisIntensita.setVariable("categoria_film", numCategoria(categoria));
+                fisIntensita.evaluate();
+                double idealIndex = fisIntensita.getVariable("affinita_intensita").getValue();
+                scoreIntensita.add(idealIndex);
+                System.out.println(databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex);
+                if (idealIndex > top) {
+                    top = idealIndex;
+                    topIntensita = databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex;
+                }
+            }
+            System.out.print("Miglior film in base all'intensità: ");
+            System.out.println(topIntensita + "\n");
+
+
+            //LOGICA FUZZY VIOLENZA --------------------------------------------------------------------
+            //fileName = "FuzzyFilm-master/src/violenza.fcl";
+            fileName = "src/violenza.fcl";
+            FIS fisViolenza = FIS.load(fileName, true);
+            if (fisViolenza == null) {
+                System.err.println("Errore caricamento FCL");
+                return;
+            }
+
+            if (rispostaGrafici == 0) {
+                gestisciGrafici(fisViolenza, "Violenza");
+            }
+
+            String[] optionsViolenza = {"perTutti", "lieve", "moderato", "forte", "estremo"};
+            String VIOLENZA_USER = "";
+
+            while(!Arrays.asList(optionsViolenza).contains(VIOLENZA_USER)){
+                VIOLENZA_USER = (String) JOptionPane.showInputDialog(
+                        null,
+                        "Che livello di violenza accetti?",
+                        "Input Violenza",
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        optionsViolenza,
+                        optionsViolenza[0]
+                );
+
+                if (VIOLENZA_USER == null) {
+                    System.out.println("Operazione annullata dall'utente.");
+                    break; // O System.exit(0);
+                }
+            }
+
+
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            chiudiFinestre();
+
+            //trasforma input stringa in int
+            double violenzaNum = numViolenza(VIOLENZA_USER); //c'è il metodo in fondo al codice
+
+
+            //prende input dell'utente e la passa al fuzzy
+            fisViolenza.setVariable("violenza", violenzaNum);
+
+            String topViolenza = "";
+            Double topV = 0.0;
+            //salvo gli score di ogni film
+            List<Double> scoreViolenza = new ArrayList<>();
+
+            for (int i = 0; i < databaseFilm.size(); i++) {
+                String violenzaFilm = databaseFilm.get(i).getContenutiEspliciti();
+                //trasformo la stringa che leggo dal db in int e poi collego all'input fuzzy
+                fisViolenza.setVariable("violenza_film", numViolenza(violenzaFilm));
+                //attivo il fuzzy
+                fisViolenza.evaluate();
+                //ottengo il risultato
+                double idealIndex = fisViolenza.getVariable("affinita_violenza").getValue();
+                scoreViolenza.add(idealIndex);
+                System.out.println(databaseFilm.get(i).getTitolo() + " -> score violenza: " + idealIndex);
+                //serve per capire qual è il rate migliore
+                if (idealIndex > topV) {
+                    topV = idealIndex;
+                    topViolenza = databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex;
+                }
+            }
+            System.out.print("Miglior film in base alla violenza: ");
+            System.out.println(topViolenza + "\n");
+
+
+            // LOGICA FUZZY PER TEMPO---------------------------------------------------------------------------------------
+            //fileName = "FuzzyFilm-master/src/tempo.fcl";
+            fileName = "src/tempo.fcl";
+            FIS fisTempo = FIS.load(fileName, true);
+            if (fisTempo == null) {
+                System.err.println("Errore caricamento FCL");
+                return;
+            }
+
+            if (rispostaGrafici == 0) {
+                gestisciGrafici(fisTempo, "Tempo");
+            }
+
+            // Input Utente tempo
+            String TEMPO_USER = "";
+            int tempoFinale = -1; // Variabile dove salveremo il numero convertito
+            boolean isValidoTempo = false;      // Flag per controllare l'uscita dal ciclo
+
+            while (!isValidoTempo) {
+                TEMPO_USER = JOptionPane.showInputDialog("Quanto tempo hai a disposizione? (0-240 minuti)");
+
+                if (TEMPO_USER == null) {
+                    System.out.println("Operazione annullata.");
+                    break;
+                }
+
+                try {
+                    tempoFinale = Integer.parseInt(TEMPO_USER);
+
+                    if (tempoFinale >= 0 && tempoFinale <= 240) {
+                        isValidoTempo = true;
+                    } else {
+                        System.err.println("Not a valid Number");
+                    }
+
+                } catch (NumberFormatException e) {
+                    System.err.println("Nan");
+                }
             }
 
             try {
-                intensitaFinale = Double.parseDouble(INTENSITA_USER);
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
-                if (intensitaFinale >= 0.0 && intensitaFinale <= 10.0) {
-                    isValido = true;
-                } else {
-                    System.err.println("Not a valid Number");
+            chiudiFinestre();
+
+            fisTempo.setVariable("tempo_a_disposizione", Double.parseDouble(TEMPO_USER));
+
+            String topTempo = "";
+            Double top1 = 0.0;
+            List<Double> scoreTempo = new ArrayList<>();
+            for (int i = 0; i < databaseFilm.size(); i++) {
+                int durata = databaseFilm.get(i).getDurata();
+
+                fisTempo.setVariable("durata_film", durata);
+                fisTempo.evaluate();
+                double idealIndex = fisTempo.getVariable("affinita_tempo").getValue();
+                scoreTempo.add(idealIndex);
+                System.out.println(databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex);
+                if (idealIndex > top1) {
+                    top1 = idealIndex;
+                    topTempo = databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex;
+                }
+            }
+            System.out.print("Miglior film in base alla durata: ");
+            System.out.println(topTempo + "\n");
+
+
+            // LOGICA FUZZY PER FINALE---------------------------------------------------------------------------------------
+            //fileName = "FuzzyFilm-master/src/finale.fcl";
+            fileName = "src/finale.fcl";
+            FIS fisFinale = FIS.load(fileName, true);
+            if (fisFinale == null) {
+                System.err.println("Errore caricamento FCL");
+                return;
+            }
+
+            if (rispostaGrafici == 0) {
+                gestisciGrafici(fisFinale, "Finale");
+            }
+
+            // Input Utente finale
+            String FINALE_USER = "";
+            Double finaleFinale = -1.0; // Variabile dove salveremo il numero convertito
+            boolean isValidoFinale = false;      // Flag per controllare l'uscita dal ciclo
+
+            while (!isValidoFinale) {
+                FINALE_USER = JOptionPane.showInputDialog("Quanto emozionante vuoi il finale? (0-10)");
+
+                if (FINALE_USER == null) {
+                    System.out.println("Operazione annullata.");
+                    break;
                 }
 
-            } catch (NumberFormatException e) {
-                System.err.println("Nan");
+                try {
+                    finaleFinale = Double.parseDouble(FINALE_USER);
+
+                    if (finaleFinale >= 0.0 && finaleFinale <= 10.0) {
+                        isValidoFinale = true;
+                    } else {
+                        System.err.println("Not a valid Number");
+                    }
+
+                } catch (NumberFormatException e) {
+                    System.err.println("Nan");
+                }
             }
-        }
 
-        fisIntensita.setVariable("intensita", Double.parseDouble(INTENSITA_USER));
-
-        try {
-            Thread.sleep(200);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        chiudiFinestre();
-
-        String topIntensita = "";
-        Double top = 0.0;
-        List<Double> scoreIntensita = new ArrayList<>();
-        for (int i = 0; i < databaseFilm.size(); i++) {
-            String categoria = databaseFilm.get(i).getCategoria();
-
-            fisIntensita.setVariable("categoria_film", numCategoria(categoria));
-            fisIntensita.evaluate();
-            double idealIndex = fisIntensita.getVariable("affinita_intensita").getValue();
-            scoreIntensita.add(idealIndex);
-            System.out.println(databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex);
-            if (idealIndex > top) {
-                top = idealIndex;
-                topIntensita = databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex;
-            }
-        }
-        System.out.print("Miglior film in base all'intensità: ");
-        System.out.println(topIntensita + "\n");
-
-
-        //LOGICA FUZZY VIOLENZA --------------------------------------------------------------------
-        //fileName = "FuzzyFilm-master/src/violenza.fcl";
-        fileName = "src/violenza.fcl";
-        FIS fisViolenza = FIS.load(fileName, true);
-        if (fisViolenza == null) {
-            System.err.println("Errore caricamento FCL");
-            return;
-        }
-
-        if (rispostaGrafici == 0) {
-            gestisciGrafici(fisViolenza, "Violenza");
-        }
-
-        String[] optionsViolenza = {"perTutti", "lieve", "moderato", "forte", "estremo"};
-        String VIOLENZA_USER = "";
-
-        while(!Arrays.asList(options).contains(TONO_USER)){
-            VIOLENZA_USER = (String) JOptionPane.showInputDialog(
-                    null,
-                    "Che livello di violenza accetti?",
-                    "Input Violenza",
-                    JOptionPane.QUESTION_MESSAGE,
-                    null,
-                    optionsViolenza,
-                    optionsViolenza[0]
-            );
-
-            if (VIOLENZA_USER == null) {
-                System.out.println("Operazione annullata dall'utente.");
-                break; // O System.exit(0);
-            }
-        }
-
-
-        try {
-            Thread.sleep(200);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        chiudiFinestre();
-
-        //trasforma input stringa in int
-        double violenzaNum = numViolenza(VIOLENZA_USER); //c'è il metodo in fondo al codice
-
-
-        //prende input dell'utente e la passa al fuzzy
-        fisViolenza.setVariable("violenza", violenzaNum);
-
-        String topViolenza = "";
-        Double topV = 0.0;
-        //salvo gli score di ogni film
-        List<Double> scoreViolenza = new ArrayList<>();
-
-        for (int i = 0; i < databaseFilm.size(); i++) {
-            String violenzaFilm = databaseFilm.get(i).getContenutiEspliciti();
-            //trasformo la stringa che leggo dal db in int e poi collego all'input fuzzy
-            fisViolenza.setVariable("violenza_film", numViolenza(violenzaFilm));
-            //attivo il fuzzy
-            fisViolenza.evaluate();
-            //ottengo il risultato
-            double idealIndex = fisViolenza.getVariable("affinita_violenza").getValue();
-            scoreViolenza.add(idealIndex);
-            System.out.println(databaseFilm.get(i).getTitolo() + " -> score violenza: " + idealIndex);
-            //serve per capire qual è il rate migliore
-            if (idealIndex > topV) {
-                topV = idealIndex;
-                topViolenza = databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex;
-            }
-        }
-        System.out.print("Miglior film in base alla violenza: ");
-        System.out.println(topViolenza + "\n");
-
-
-        // LOGICA FUZZY PER TEMPO---------------------------------------------------------------------------------------
-        //fileName = "FuzzyFilm-master/src/tempo.fcl";
-        fileName = "src/tempo.fcl";
-        FIS fisTempo = FIS.load(fileName, true);
-        if (fisTempo == null) {
-            System.err.println("Errore caricamento FCL");
-            return;
-        }
-
-        if (rispostaGrafici == 0) {
-            gestisciGrafici(fisTempo, "Tempo");
-        }
-
-        // Input Utente tempo
-        String TEMPO_USER = "";
-        int tempoFinale = -1; // Variabile dove salveremo il numero convertito
-        boolean isValidoTempo = false;      // Flag per controllare l'uscita dal ciclo
-
-        while (!isValidoTempo) {
-            TEMPO_USER = JOptionPane.showInputDialog("Quanto tempo hai a disposizione? (0-240 minuti)");
-
-            if (TEMPO_USER == null) {
-                System.out.println("Operazione annullata.");
-                break;
-            }
 
             try {
-                tempoFinale = Integer.parseInt(TEMPO_USER);
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
-                if (tempoFinale >= 0 && tempoFinale <= 240) {
-                    isValidoTempo = true;
-                } else {
-                    System.err.println("Not a valid Number");
+            chiudiFinestre();
+            fisFinale.setVariable("intensita_emozioni_post_film", Double.parseDouble(FINALE_USER));
+
+            String topFinale = "";
+            Double top2 = 0.0;
+            List<Double> scoreFinale = new ArrayList<>();
+            for (int i = 0; i < databaseFilm.size(); i++) {
+                String finale = databaseFilm.get(i).getFinale();
+
+                fisFinale.setVariable("finale_film", numFinale(finale));
+                fisFinale.evaluate();
+                double idealIndex = fisFinale.getVariable("affinita_finale").getValue();
+                scoreFinale.add(idealIndex);
+                System.out.println(databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex);
+                if (idealIndex > top2) {
+                    top2 = idealIndex;
+                    topFinale = databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex;
+                }
+            }
+            System.out.print("Miglior film in base al finale: ");
+            System.out.println(topFinale + "\n");
+
+
+            // LOGICA FUZZY PER COMPLESSITA---------------------------------------------------------------------------------------
+            //fileName = "FuzzyFilm-master/src/complessitaNarrativa.fcl";
+            fileName = "src/complessitaNarrativa.fcl";
+            FIS fisComplessita = FIS.load(fileName, true);
+            if (fisComplessita == null) {
+                System.err.println("Errore caricamento FCL");
+                return;
+            }
+
+            if (rispostaGrafici == 0) {
+                gestisciGrafici(fisComplessita, "Complessita");
+            }
+
+            // Input Utente complessita
+            String COMPLESSITA_USER = "";
+            Double complessitaFinale = -1.0; // Variabile dove salveremo il numero convertito
+            boolean isValidoComplessita = false;      // Flag per controllare l'uscita dal ciclo
+
+            while (!isValidoComplessita) {
+                COMPLESSITA_USER = JOptionPane.showInputDialog("Quanto complessa vuoi la trama? (0-10)");
+
+                if (COMPLESSITA_USER == null) {
+                    System.out.println("Operazione annullata.");
+                    break;
                 }
 
-            } catch (NumberFormatException e) {
-                System.err.println("Nan");
+                try {
+                    complessitaFinale = Double.parseDouble(COMPLESSITA_USER);
+
+                    if (complessitaFinale >= 0.0 && complessitaFinale <= 10.0) {
+                        isValidoComplessita = true;
+                    } else {
+                        System.err.println("Not a valid Number");
+                    }
+
+                } catch (NumberFormatException e) {
+                    System.err.println("Nan");
+                }
             }
-        }
 
-        try {
-            Thread.sleep(200);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        chiudiFinestre();
-
-        fisTempo.setVariable("tempo_a_disposizione", Double.parseDouble(TEMPO_USER));
-
-        String topTempo = "";
-        Double top1 = 0.0;
-        List<Double> scoreTempo = new ArrayList<>();
-        for (int i = 0; i < databaseFilm.size(); i++) {
-            int durata = databaseFilm.get(i).getDurata();
-
-            fisTempo.setVariable("durata_film", durata);
-            fisTempo.evaluate();
-            double idealIndex = fisTempo.getVariable("affinita_tempo").getValue();
-            scoreTempo.add(idealIndex);
-            System.out.println(databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex);
-            if (idealIndex > top1) {
-                top1 = idealIndex;
-                topTempo = databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex;
-            }
-        }
-        System.out.print("Miglior film in base alla durata: ");
-        System.out.println(topTempo + "\n");
-
-
-        // LOGICA FUZZY PER FINALE---------------------------------------------------------------------------------------
-        //fileName = "FuzzyFilm-master/src/finale.fcl";
-        fileName = "src/finale.fcl";
-        FIS fisFinale = FIS.load(fileName, true);
-        if (fisFinale == null) {
-            System.err.println("Errore caricamento FCL");
-            return;
-        }
-
-        if (rispostaGrafici == 0) {
-            gestisciGrafici(fisFinale, "Finale");
-        }
-
-        // Input Utente finale
-        String FINALE_USER = "";
-        Double finaleFinale = -1.0; // Variabile dove salveremo il numero convertito
-        boolean isValidoFinale = false;      // Flag per controllare l'uscita dal ciclo
-
-        while (!isValidoFinale) {
-            FINALE_USER = JOptionPane.showInputDialog("Quanto emozionante vuoi il finale? (0-10)");
-
-            if (FINALE_USER == null) {
-                System.out.println("Operazione annullata.");
-                break;
-            }
 
             try {
-                finaleFinale = Double.parseDouble(FINALE_USER);
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
-                if (finaleFinale >= 0.0 && finaleFinale <= 10.0) {
-                    isValidoFinale = true;
-                } else {
-                    System.err.println("Not a valid Number");
+            chiudiFinestre();
+            fisComplessita.setVariable("complessita", Double.parseDouble(COMPLESSITA_USER));
+
+            String topComplessita = "";
+            Double top3 = 0.0;
+            List<Double> scoreComplessita = new ArrayList<>();
+            for (int i = 0; i < databaseFilm.size(); i++) {
+                String cmplxty = databaseFilm.get(i).getComplessita();
+
+                fisComplessita.setVariable("complessita_film", numComplessita(cmplxty));
+                fisComplessita.evaluate();
+                double idealIndex = fisComplessita.getVariable("affinita_complessita").getValue();
+                scoreComplessita.add(idealIndex);
+                System.out.println(databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex);
+                if (idealIndex > top3) {
+                    top3 = idealIndex;
+                    topComplessita = databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex;
+                }
+            }
+            System.out.print("Miglior film in base alla complessita: ");
+            System.out.println(topComplessita + "\n");
+
+
+            // LOGICA FUZZY PER REALISMO---------------------------------------------------------------------------------------
+            //fileName = "FuzzyFilm-master/src/complessitaNarrativa.fcl";
+            fileName = "src/realismo.fcl";
+            FIS fisRealismo = FIS.load(fileName, true);
+            if (fisRealismo == null) {
+                System.err.println("Errore caricamento FCL");
+                return;
+            }
+
+            if (rispostaGrafici == 0) {
+                gestisciGrafici(fisRealismo, "Realismo");
+            }
+
+            // Input Utente realismo
+            String REALISMO_USER = "";
+            Double realismoFinale = -1.0; // Variabile dove salveremo il numero convertito
+            boolean isValidoRealismo = false;      // Flag per controllare l'uscita dal ciclo
+
+            while (!isValidoRealismo) {
+                REALISMO_USER = JOptionPane.showInputDialog("Quanto vuoi fantasioso il film? (0-10)");
+
+                if (REALISMO_USER == null) {
+                    System.out.println("Operazione annullata.");
+                    break;
                 }
 
-            } catch (NumberFormatException e) {
-                System.err.println("Nan");
+                try {
+                    realismoFinale = Double.parseDouble(REALISMO_USER);
+
+                    if (realismoFinale >= 0.0 && realismoFinale <= 10.0) {
+                        isValidoRealismo = true;
+                    } else {
+                        System.err.println("Not a valid Number");
+                    }
+
+                } catch (NumberFormatException e) {
+                    System.err.println("Nan");
+                }
             }
-        }
 
-
-        try {
-            Thread.sleep(200);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        chiudiFinestre();
-        fisFinale.setVariable("intensita_emozioni_post_film", Double.parseDouble(FINALE_USER));
-
-        String topFinale = "";
-        Double top2 = 0.0;
-        List<Double> scoreFinale = new ArrayList<>();
-        for (int i = 0; i < databaseFilm.size(); i++) {
-            String finale = databaseFilm.get(i).getFinale();
-
-            fisFinale.setVariable("finale_film", numFinale(finale));
-            fisFinale.evaluate();
-            double idealIndex = fisFinale.getVariable("affinita_finale").getValue();
-            scoreFinale.add(idealIndex);
-            System.out.println(databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex);
-            if (idealIndex > top2) {
-                top2 = idealIndex;
-                topFinale = databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex;
-            }
-        }
-        System.out.print("Miglior film in base al finale: ");
-        System.out.println(topFinale + "\n");
-
-
-        // LOGICA FUZZY PER COMPLESSITA---------------------------------------------------------------------------------------
-        //fileName = "FuzzyFilm-master/src/complessitaNarrativa.fcl";
-        fileName = "src/complessitaNarrativa.fcl";
-        FIS fisComplessita = FIS.load(fileName, true);
-        if (fisComplessita == null) {
-            System.err.println("Errore caricamento FCL");
-            return;
-        }
-
-        if (rispostaGrafici == 0) {
-            gestisciGrafici(fisComplessita, "Complessita");
-        }
-
-        // Input Utente complessita
-        String COMPLESSITA_USER = "";
-        Double complessitaFinale = -1.0; // Variabile dove salveremo il numero convertito
-        boolean isValidoComplessita = false;      // Flag per controllare l'uscita dal ciclo
-
-        while (!isValidoComplessita) {
-            COMPLESSITA_USER = JOptionPane.showInputDialog("Quanto complessa vuoi la trama? (0-10)");
-
-            if (COMPLESSITA_USER == null) {
-                System.out.println("Operazione annullata.");
-                break;
-            }
 
             try {
-                complessitaFinale = Double.parseDouble(COMPLESSITA_USER);
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
-                if (complessitaFinale >= 0.0 && complessitaFinale <= 10.0) {
-                    isValidoComplessita = true;
+            chiudiFinestre();
+            fisRealismo.setVariable("fantasia", Double.parseDouble(REALISMO_USER));
+
+            String topRealismo = "";
+            Double top4 = 0.0;
+            List<Double> scoreRealismo = new ArrayList<>();
+            for (int i = 0; i < databaseFilm.size(); i++) {
+                String real = databaseFilm.get(i).getRealismo();
+
+                fisRealismo.setVariable("fantasia_film", numRealismo(real));
+                fisRealismo.evaluate();
+                double idealIndex = fisRealismo.getVariable("affinita_realismo").getValue();
+                scoreRealismo.add(idealIndex);
+                System.out.println(databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex);
+                if (idealIndex > top4) {
+                    top4 = idealIndex;
+                    topRealismo = databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex;
+                }
+            }
+            System.out.print("Miglior film in base alla fantasia: ");
+            System.out.println(topRealismo + "\n");
+
+
+            // CALCOLO FILM MIGLIORE
+            int indexBest = 0;
+            Double bestScore = 0.0;
+            for (int i = 0; i < databaseFilm.size(); i++) {
+                Double intensitaTemp = scoreIntensita.get(i);
+                Double tempoTemp = scoreTempo.get(i);
+                Double finaleTemp = scoreFinale.get(i);
+                Double complessitaTemp = scoreComplessita.get(i);
+                Double realismoTemp = scoreRealismo.get(i);
+                Double tonoTemp = scoreTone.get(i);
+                Double violenzaTemp = scoreViolenza.get(i);
+
+                if (intensitaTemp < SOGLIA || tempoTemp < SOGLIA || finaleTemp < SOGLIA ||
+                        complessitaTemp < SOGLIA || realismoTemp < SOGLIA || tonoTemp < SOGLIA || violenzaTemp < SOGLIA) {
+                    databaseFilm.get(i).setScore(0.0);
                 } else {
-                    System.err.println("Not a valid Number");
+                    databaseFilm.get(i).setScore((intensitaTemp + tempoTemp + finaleTemp +
+                            complessitaTemp + realismoTemp + tonoTemp + violenzaTemp) / 7);
+                    if (databaseFilm.get(i).getScore() > bestScore) {
+                        indexBest = i;
+                        bestScore = databaseFilm.get(i).getScore();
+                    }
                 }
 
-            } catch (NumberFormatException e) {
-                System.err.println("Nan");
+                //System.out.println(databaseFilm.get(i).toString());
             }
-        }
+            //System.out.print("\n\nMiglior film in base a tutti i parametri: " + databaseFilm.get(indexBest).toString());
 
-
-        try {
-            Thread.sleep(200);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        chiudiFinestre();
-        fisComplessita.setVariable("complessita", Double.parseDouble(COMPLESSITA_USER));
-
-        String topComplessita = "";
-        Double top3 = 0.0;
-        List<Double> scoreComplessita = new ArrayList<>();
-        for (int i = 0; i < databaseFilm.size(); i++) {
-            String cmplxty = databaseFilm.get(i).getComplessita();
-
-            fisComplessita.setVariable("complessita_film", numComplessita(cmplxty));
-            fisComplessita.evaluate();
-            double idealIndex = fisComplessita.getVariable("affinita_complessita").getValue();
-            scoreComplessita.add(idealIndex);
-            System.out.println(databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex);
-            if (idealIndex > top3) {
-                top3 = idealIndex;
-                topComplessita = databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex;
-            }
-        }
-        System.out.print("Miglior film in base alla complessita: ");
-        System.out.println(topComplessita + "\n");
-
-
-        // LOGICA FUZZY PER REALISMO---------------------------------------------------------------------------------------
-        //fileName = "FuzzyFilm-master/src/complessitaNarrativa.fcl";
-        fileName = "src/realismo.fcl";
-        FIS fisRealismo = FIS.load(fileName, true);
-        if (fisRealismo == null) {
-            System.err.println("Errore caricamento FCL");
-            return;
-        }
-
-        if (rispostaGrafici == 0) {
-            gestisciGrafici(fisRealismo, "Realismo");
-        }
-
-        // Input Utente realismo
-        String REALISMO_USER = "";
-        Double realismoFinale = -1.0; // Variabile dove salveremo il numero convertito
-        boolean isValidoRealismo = false;      // Flag per controllare l'uscita dal ciclo
-
-        while (!isValidoRealismo) {
-            REALISMO_USER = JOptionPane.showInputDialog("Quanto vuoi fantasioso il film? (0-10)");
-
-            if (REALISMO_USER == null) {
-                System.out.println("Operazione annullata.");
-                break;
-            }
-
-            try {
-                realismoFinale = Double.parseDouble(REALISMO_USER);
-
-                if (realismoFinale >= 0.0 && realismoFinale <= 10.0) {
-                    isValidoRealismo = true;
-                } else {
-                    System.err.println("Not a valid Number");
-                }
-
-            } catch (NumberFormatException e) {
-                System.err.println("Nan");
-            }
-        }
-
-
-        try {
-            Thread.sleep(200);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        chiudiFinestre();
-        fisRealismo.setVariable("fantasia", Double.parseDouble(REALISMO_USER));
-
-        String topRealismo = "";
-        Double top4 = 0.0;
-        List<Double> scoreRealismo = new ArrayList<>();
-        for (int i = 0; i < databaseFilm.size(); i++) {
-            String real = databaseFilm.get(i).getRealismo();
-
-            fisRealismo.setVariable("fantasia_film", numRealismo(real));
-            fisRealismo.evaluate();
-            double idealIndex = fisRealismo.getVariable("affinita_realismo").getValue();
-            scoreRealismo.add(idealIndex);
-            System.out.println(databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex);
-            if (idealIndex > top4) {
-                top4 = idealIndex;
-                topRealismo = databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex;
-            }
-        }
-        System.out.print("Miglior film in base alla fantasia: ");
-        System.out.println(topRealismo + "\n");
-
-
-        // CALCOLO FILM MIGLIORE
-        int indexBest = 0;
-        Double bestScore = 0.0;
-        for (int i = 0; i < databaseFilm.size(); i++) {
-            Double intensitaTemp = scoreIntensita.get(i);
-            Double tempoTemp = scoreTempo.get(i);
-            Double finaleTemp = scoreFinale.get(i);
-            Double complessitaTemp = scoreComplessita.get(i);
-            Double realismoTemp = scoreRealismo.get(i);
-            Double tonoTemp = scoreTone.get(i);
-            Double violenzaTemp = scoreViolenza.get(i);
-
-            if (intensitaTemp < SOGLIA || tempoTemp < SOGLIA || finaleTemp < SOGLIA ||
-                    complessitaTemp < SOGLIA || realismoTemp < SOGLIA || tonoTemp < SOGLIA || violenzaTemp < SOGLIA) {
-                databaseFilm.get(i).setScore(0.0);
-            } else {
-                databaseFilm.get(i).setScore((intensitaTemp + tempoTemp + finaleTemp +
-                        complessitaTemp + realismoTemp + tonoTemp + violenzaTemp) / 7);
-                if (databaseFilm.get(i).getScore() > bestScore) {
-                    indexBest = i;
-                    bestScore = databaseFilm.get(i).getScore();
+            Collections.sort(databaseFilm);
+            System.out.println("\n--- CLASSIFICA FILM ---");
+            int i = 1;
+            for (Film f : databaseFilm) {
+                if (f.getScore() > 0) { //non mostro quelli con score nullo
+                    System.out.println(i + ". " + f);
+                    i++;
                 }
             }
 
-            //System.out.println(databaseFilm.get(i).toString());
-        }
-        //System.out.print("\n\nMiglior film in base a tutti i parametri: " + databaseFilm.get(indexBest).toString());
-
-        Collections.sort(databaseFilm);
-        System.out.println("\n--- CLASSIFICA FILM ---");
-        int i = 1;
-        for (Film f : databaseFilm) {
-            if (f.getScore() > 0) { //non mostro quelli con score nullo
-                System.out.println(i + ". " + f);
-                i++;
-            }
-        }
-
-        Film BEST = databaseFilm.get(0);
+            Film BEST = databaseFilm.get(0);
             mostraRisultatoFinale(BEST, databaseFilm);
 
 
@@ -611,16 +611,20 @@ public class Main {
             if (risposta == JOptionPane.NO_OPTION) {
                 continuaRicerca = false;
                 System.out.println("\nBuona visione!");
+                chiudiFinestre();
+
             } else {
 
                 System.out.println("NUOVA RICERCA");
 
                 chiudiFinestre();
+
             }
 
         } while (continuaRicerca);
 
         chiudiFinestre();
+
     }
 
 
@@ -995,37 +999,21 @@ public class Main {
     // le finestre che apre la libreria
 
     private static void chiudiFinestre() {
-        for (Window window : Window.getWindows()) {
-            // Controlliamo se la finestra è visibile
-            if (window.isDisplayable()) {
-                // Se vuoi evitare di chiudere la finestra principale,
-                // metti il titolo della tua app qui sotto
-                String titolo = "";
-
-                if (window instanceof Frame) {
-                    titolo = ((Frame) window).getTitle();
-                } else if (window instanceof Dialog) {
-                    titolo = ((Dialog) window).getTitle();
-                }
-
-                // Chiudi solo le finestre dei grafici JFuzzyChart
-                // Queste finestre hanno titoli specifici come "Variable: affinita", "FunctionBlock", etc.
-                // NON chiudere i dialog di input che hanno titoli come "Input", "Select", "Message", etc.
-                boolean isGraficoFuzzy = titolo.isEmpty(); // Le finestre dei grafici spesso hanno titolo vuoto
-
-                boolean isDialogInput = titolo.contains("Input") ||
-                        titolo.contains("Select") ||
-                        titolo.contains("Debug") ||
-                        titolo.contains("Message");
-
-                // Chiudi solo se è un grafico fuzzy E NON è un dialog di input
-                if (isGraficoFuzzy && !isDialogInput) {
+        // Usiamo invokeLater per evitare il deadlock (blocco del programma)
+        SwingUtilities.invokeLater(() -> {
+            // Cicla su TUTTE le finestre attive nell'applicazione (senza filtri sul tipo)
+            for (Window window : Window.getWindows()) {
+                // Se la finestra è ancora gestita dal sistema
+                if (window.isDisplayable()) {
+                    // 1. La rendiamo invisibile subito (così sparisce alla vista istantaneamente)
                     window.setVisible(false);
+                    // 2. Liberiamo le risorse
                     window.dispose();
                 }
             }
-        }
+        });
     }
+
 
 
     private static void mostraRisultatoFinale(Film best, List<Film> classifica) {
@@ -1045,15 +1033,14 @@ public class Main {
         messaggio.append("⚠️  Contenuti: ").append(best.getContenutiEspliciti()).append("\n\n");
 
         // Aggiungi la top 3
-        messaggio.append("🏆 TOP 3 RACCOMANDAZIONI:\n");
+        messaggio.append("🏆 TOP RACCOMANDAZIONI:\n");
         messaggio.append("━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
-        int count = 1;
+        int i = 1;
         for (Film f : classifica) {
-            if (f.getScore() > 0 && count <= 3) {
-                String medaglia = count == 1 ? "🥇" : count == 2 ? "🥈" : "🥉";
-                messaggio.append(medaglia).append(" ").append(f.getTitolo())
+            if (f.getScore() > 0 && i <= 3) {
+                messaggio.append(" ").append(f.getTitolo())
                         .append(" (").append(String.format("%.2f", f.getScore())).append(")\n");
-                count++;
+                i++;
             }
         }
 
@@ -1069,8 +1056,3 @@ public class Main {
     }
 
 }
-
-
-
-
-
