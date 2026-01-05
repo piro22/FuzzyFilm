@@ -21,6 +21,10 @@ public class Main {
 
     public static void main(String[] args) {
 
+        boolean continuaRicerca = true;
+
+        do {
+
         // CARICAMENTO FILM DA CSV
         List<Film> databaseFilm = new ArrayList<>();
         //String csvFile = "FuzzyFilm-master/res/movies.csv";
@@ -451,7 +455,31 @@ public class Main {
         }
 
         Film BEST = databaseFilm.get(0);
-        creaGraficiBestResult(BEST, TONO_USER, INTENSITA_USER, VIOLENZA_USER, TEMPO_USER, FINALE_USER, COMPLESSITA_USER, REALISMO_USER);
+            mostraRisultatoFinale(BEST, databaseFilm);
+
+
+            creaGraficiBestResult(BEST, TONO_USER, INTENSITA_USER, VIOLENZA_USER, TEMPO_USER, FINALE_USER, COMPLESSITA_USER, REALISMO_USER);
+
+            int risposta = JOptionPane.showConfirmDialog(
+                    null,
+                    "Vuoi cercare un altro film?",
+                    "Nuova Ricerca",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            if (risposta == JOptionPane.NO_OPTION) {
+                continuaRicerca = false;
+                System.out.println("\nBuona visione!");
+            } else {
+
+                System.out.println("NUOVA RICERCA");
+
+                chiudiFinestre();
+            }
+
+        } while (continuaRicerca);
+
+        chiudiFinestre();
     }
 
 
@@ -856,6 +884,47 @@ public class Main {
                 }
             }
         }
+    }
+
+
+    private static void mostraRisultatoFinale(Film best, List<Film> classifica) {
+        // Costruisci il messaggio con il film migliore
+        StringBuilder messaggio = new StringBuilder();
+        messaggio.append("🎬 IL TUO FILM IDEALE È:\n\n");
+        messaggio.append("━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+        messaggio.append("📽️  ").append(best.getTitolo()).append("\n");
+        messaggio.append("━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
+        messaggio.append("📊 Score: ").append(String.format("%.2f", best.getScore())).append("\n");
+        messaggio.append("🎭 Categoria: ").append(best.getCategoria()).append("\n");
+        messaggio.append("⏱️  Durata: ").append(best.getDurata()).append(" minuti\n");
+        messaggio.append("🎨 Tono: ").append(best.getTono()).append("\n");
+        messaggio.append("🎯 Complessità: ").append(best.getComplessita()).append("\n");
+        messaggio.append("✨ Realismo: ").append(best.getRealismo()).append("\n");
+        messaggio.append("🎬 Finale: ").append(best.getFinale()).append("\n");
+        messaggio.append("⚠️  Contenuti: ").append(best.getContenutiEspliciti()).append("\n\n");
+
+        // Aggiungi la top 3
+        messaggio.append("🏆 TOP 3 RACCOMANDAZIONI:\n");
+        messaggio.append("━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+        int count = 1;
+        for (Film f : classifica) {
+            if (f.getScore() > 0 && count <= 3) {
+                String medaglia = count == 1 ? "🥇" : count == 2 ? "🥈" : "🥉";
+                messaggio.append(medaglia).append(" ").append(f.getTitolo())
+                        .append(" (").append(String.format("%.2f", f.getScore())).append(")\n");
+                count++;
+            }
+        }
+
+        messaggio.append("\n🍿 BUONA VISIONE! 🍿");
+
+        // Mostra il dialog
+        JOptionPane.showMessageDialog(
+                null,
+                messaggio.toString(),
+                "🎉 Raccomandazione Film",
+                JOptionPane.INFORMATION_MESSAGE
+        );
     }
 
 }
