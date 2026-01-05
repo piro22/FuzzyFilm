@@ -7,7 +7,7 @@ VAR_INPUT
 END_VAR
 
 VAR_OUTPUT
-    affinita : REAL;
+    affinita_violenza : REAL;
 END_VAR
 
 FUZZIFY violenza
@@ -26,7 +26,7 @@ FUZZIFY violenza_film
     TERM estremo := (8, 0) (9, 1) (10, 1) (10, 0);
 END_FUZZIFY
 
-DEFUZZIFY affinita
+DEFUZZIFY affinita_violenza
     TERM scartare := (0, 0) (0, 1) (0.15, 1) (0.4, 0);
     TERM considerare := gauss 0.5 0.15;
     TERM imperdibile := (0.6, 0) (0.85, 1) (1, 1) (1, 0);
@@ -40,63 +40,63 @@ RULEBLOCK Rules
 
     // PREFERENZA: PER TUTTI
     RULE 1 : IF violenza IS per_tutti AND violenza_film IS per_tutti
-             THEN affinita IS imperdibile;
+             THEN affinita_violenza IS imperdibile;
     RULE 2 : IF violenza IS per_tutti AND violenza_film IS lieve
-             THEN affinita IS considerare;
+             THEN affinita_violenza IS considerare;
     RULE 3 : IF violenza IS per_tutti AND violenza_film IS moderato
-             THEN affinita IS scartare;
+             THEN affinita_violenza IS scartare;
     RULE 4 : IF violenza IS per_tutti AND violenza_film IS esplicito
-             THEN affinita IS scartare;
+             THEN affinita_violenza IS scartare;
     RULE 5 : IF violenza IS per_tutti AND violenza_film IS estremo
-             THEN affinita IS scartare;
+             THEN affinita_violenza IS scartare;
 
     // PREFERENZA: LIEVE
     RULE 6 : IF violenza IS lieve AND violenza_film IS per_tutti
-             THEN affinita IS considerare;
+             THEN affinita_violenza IS considerare;
     RULE 7 : IF violenza IS lieve AND violenza_film IS lieve
-             THEN affinita IS imperdibile;
+             THEN affinita_violenza IS imperdibile;
     RULE 8 : IF violenza IS lieve AND violenza_film IS moderato
-             THEN affinita IS considerare;
+             THEN affinita_violenza IS considerare;
     RULE 9 : IF violenza IS lieve AND violenza_film IS esplicito
-             THEN affinita IS scartare;
+             THEN affinita_violenza IS scartare;
     RULE 10 : IF violenza IS lieve AND violenza_film IS estremo
-              THEN affinita IS scartare;
+              THEN affinita_violenza IS scartare;
 
     // PREFERENZA: MODERATO
     RULE 11 : IF violenza IS moderato AND violenza_film IS per_tutti
-              THEN affinita IS considerare;
+              THEN affinita_violenza IS considerare;
     RULE 12 : IF violenza IS moderato AND violenza_film IS lieve
-              THEN affinita IS considerare;
+              THEN affinita_violenza IS considerare;
     RULE 13 : IF violenza IS moderato AND violenza_film IS moderato
-              THEN affinita IS imperdibile;
+              THEN affinita_violenza IS imperdibile;
     RULE 14 : IF violenza IS moderato AND violenza_film IS esplicito
-              THEN affinita IS considerare;
+              THEN affinita_violenza IS considerare;
     RULE 15 : IF violenza IS moderato AND violenza_film IS estremo
-              THEN affinita IS scartare;
+              THEN affinita_violenza IS scartare;
 
     // PREFERENZA: esplicito
     RULE 16 : IF violenza IS esplicito AND violenza_film IS per_tutti
-              THEN affinita IS scartare;
+              THEN affinita_violenza IS scartare;
     RULE 17 : IF violenza IS esplicito AND violenza_film IS lieve
-              THEN affinita IS considerare;
+              THEN affinita_violenza IS considerare;
     RULE 18 : IF violenza IS esplicito AND violenza_film IS moderato
-              THEN affinita IS considerare;
+              THEN affinita_violenza IS considerare;
     RULE 19 : IF violenza IS esplicito AND violenza_film IS esplicito
-              THEN affinita IS imperdibile;
+              THEN affinita_violenza IS imperdibile;
     RULE 20 : IF violenza IS esplicito AND violenza_film IS estremo
-              THEN affinita IS considerare;
+              THEN affinita_violenza IS considerare;
 
     // PREFERENZA: ESTREMO
     RULE 21 : IF violenza IS estremo AND violenza_film IS per_tutti
-              THEN affinita IS scartare;
+              THEN affinita_violenza IS scartare;
     RULE 22 : IF violenza IS estremo AND violenza_film IS lieve
-              THEN affinita IS scartare;
+              THEN affinita_violenza IS scartare;
     RULE 23 : IF violenza IS estremo AND violenza_film IS moderato
-              THEN affinita IS considerare;
+              THEN affinita_violenza IS considerare;
     RULE 24 : IF violenza IS estremo AND violenza_film IS esplicito
-              THEN affinita IS considerare;
+              THEN affinita_violenza IS considerare;
     RULE 25 : IF violenza IS estremo AND violenza_film IS estremo
-              THEN affinita IS imperdibile;
+              THEN affinita_violenza IS imperdibile;
 
 END_RULEBLOCK
 

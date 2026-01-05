@@ -7,7 +7,7 @@ VAR_INPUT
 END_VAR
 
 VAR_OUTPUT
-    affinita : REAL;
+    affinita_intensita : REAL;
 END_VAR
 
 
@@ -33,7 +33,7 @@ END_FUZZIFY
 
 
 
-DEFUZZIFY affinita
+DEFUZZIFY affinita_intensita
     TERM scartare := (0, 0) (0, 1) (0.15, 1) (0.4, 0);
     TERM considerare := gauss 0.5 0.15;
     TERM imperdibile := (0.6, 0) (0.85, 1) (1, 1) (1, 0);
@@ -53,17 +53,17 @@ RULEBLOCK Rules
     // Match Perfetto: Horror, Azione, Thriller sono il top per l'adrenalina
     RULE 1 : IF intensita IS alta
              AND (categoria_film IS horror OR categoria_film IS azione OR categoria_film IS thriller)
-             THEN affinita IS imperdibile;
+             THEN affinita_intensita IS imperdibile;
 
     // Match Parziale: Avventura e SciFi/Fantasy sono ok, ma meno intensi. Commedia è un "forse".
     RULE 2 : IF intensita IS alta
              AND (categoria_film IS avventura OR categoria_film IS scifi OR categoria_film IS fantasy OR categoria_film IS commedia)
-             THEN affinita IS considerare;
+             THEN affinita_intensita IS considerare;
 
     // Mismatch Totale: Se voglio adrenalina, mi annoio con Drammatici, Romance, Animazione
     RULE 3 : IF intensita IS alta
              AND (categoria_film IS drammatico OR categoria_film IS romance OR categoria_film IS animazione)
-             THEN affinita IS scartare;
+             THEN affinita_intensita IS scartare;
 
 
     // -----------------------------------------------------------------
@@ -73,18 +73,18 @@ RULEBLOCK Rules
     // Match Perfetto: Commedia, Avventura, SciFi, Fantasy sono perfetti per "intensità media"
     RULE 4 : IF intensita IS media
              AND (categoria_film IS commedia OR categoria_film IS avventura OR categoria_film IS scifi OR categoria_film IS fantasy)
-             THEN affinita IS imperdibile;
+             THEN affinita_intensita IS imperdibile;
 
     // Match Parziale (Verso l'alto): Azione/Thriller potrebbero andare bene, Horror forse è troppo.
     // Match Parziale (Verso il basso): Animazione/Romance potrebbero andare bene.
     RULE 5 : IF intensita IS media
              AND (categoria_film IS azione OR categoria_film IS thriller OR categoria_film IS animazione OR categoria_film IS romance OR categoria_film IS drammatico)
-             THEN affinita IS considerare;
+             THEN affinita_intensita IS considerare;
 
     // Mismatch: L'horror è troppo estremo per chi vuole una cosa "media"
     RULE 6 : IF intensita IS media
              AND (categoria_film IS horror)
-             THEN affinita IS scartare;
+             THEN affinita_intensita IS scartare;
 
 
     // -----------------------------------------------------------------
@@ -94,17 +94,17 @@ RULEBLOCK Rules
     // Match Perfetto: Drammatico, Romance, Animazione sono ideali per relax
     RULE 7 : IF intensita IS bassa
              AND (categoria_film IS drammatico OR categoria_film IS romance OR categoria_film IS animazione)
-             THEN affinita IS imperdibile;
+             THEN affinita_intensita IS imperdibile;
 
     // Match Parziale: Commedia e Fantasy sono leggeri, quindi accettabili
     RULE 8 : IF intensita IS bassa
              AND (categoria_film IS commedia OR categoria_film IS fantasy OR categoria_film IS avventura)
-             THEN affinita IS considerare;
+             THEN affinita_intensita IS considerare;
 
     // Mismatch Totale: Se voglio relax, odio Horror, Azione e Thriller
     RULE 9 : IF intensita IS bassa
              AND (categoria_film IS horror OR categoria_film IS azione OR categoria_film IS thriller OR categoria_film IS scifi)
-             THEN affinita IS scartare;
+             THEN affinita_intensita IS scartare;
 
 END_RULEBLOCK
 

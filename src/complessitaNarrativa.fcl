@@ -7,7 +7,7 @@ VAR_INPUT
 END_VAR
 
 VAR_OUTPUT
-    affinita : REAL;
+    affinita_complessita : REAL;
 END_VAR
 
 
@@ -28,7 +28,7 @@ END_FUZZIFY
 
 
 
-DEFUZZIFY affinita
+DEFUZZIFY affinita_complessita
     TERM scartare := (0, 0) (0, 1) (0.15, 1) (0.4, 0);
     TERM considerare := gauss 0.5 0.15;
     TERM imperdibile := (0.6, 0) (0.85, 1) (1, 1) (1, 0);
@@ -49,17 +49,17 @@ RULEBLOCK Rules
     // Se voglio spegnere il cervello, un film semplice è perfetto
     RULE 1 : IF complessita IS semplice
              AND complessita_film IS semplice
-             THEN affinita IS imperdibile;
+             THEN affinita_complessita IS imperdibile;
 
     // Un film lineare (trama classica) lo posso gestire anche se sono stanco
     RULE 2 : IF complessita IS semplice
              AND complessita_film IS lineare
-             THEN affinita IS considerare;
+             THEN affinita_complessita IS considerare;
 
     // Se voglio relax, evitare assolutamente trame intricate o cervellotiche
     RULE 3 : IF complessita IS semplice
              AND (complessita_film IS intricata OR complessita_film IS cerebrale)
-             THEN affinita IS scartare;
+             THEN affinita_complessita IS scartare;
 
 
     // -----------------------------------------------------------------
@@ -69,17 +69,17 @@ RULEBLOCK Rules
     // Cerco una bella storia classica (inizio-svolgimento-fine chiari)
     RULE 4 : IF complessita IS lineare
              AND complessita_film IS lineare
-             THEN affinita IS imperdibile;
+             THEN affinita_complessita IS imperdibile;
 
     // Accetto sia qualcosa di molto leggero, sia qualcosa di un po' più pepato
     RULE 5 : IF complessita IS lineare
              AND (complessita_film IS semplice OR complessita_film IS intricata)
-             THEN affinita IS considerare;
+             THEN affinita_complessita IS considerare;
 
     // Evito i film troppo pesanti/filosofici, rovinerebbero la serata "standard"
     RULE 6 : IF complessita IS lineare
              AND complessita_film IS cerebrale
-             THEN affinita IS scartare;
+             THEN affinita_complessita IS scartare;
 
 
     // -----------------------------------------------------------------
@@ -89,17 +89,17 @@ RULEBLOCK Rules
     // Voglio stare attento ai dettagli, cerco trame fitte (thriller, gialli)
     RULE 7 : IF complessita IS intricata
              AND complessita_film IS intricata
-             THEN affinita IS imperdibile;
+             THEN affinita_complessita IS imperdibile;
 
     // Se il film è troppo semplice mi annoio, meglio scartarlo
     RULE 8 : IF complessita IS intricata
              AND complessita_film IS semplice
-             THEN affinita IS scartare;
+             THEN affinita_complessita IS scartare;
 
     // Una storia lineare è un "piano B", oppure un film "cerebrale" se mi sento coraggioso
     RULE 9 : IF complessita IS intricata
              AND (complessita_film IS lineare OR complessita_film IS cerebrale)
-             THEN affinita IS considerare;
+             THEN affinita_complessita IS considerare;
 
 
     // -----------------------------------------------------------------
@@ -109,17 +109,17 @@ RULEBLOCK Rules
     // Voglio film alla Nolan/Lynch, cose che devo rivedere due volte
     RULE 10 : IF complessita IS cerebrale
               AND complessita_film IS cerebrale
-              THEN affinita IS imperdibile;
+              THEN affinita_complessita IS imperdibile;
 
     // Un film intricato va bene, ma forse è troppo "facile" per il mio mood attuale
     RULE 11 : IF complessita IS cerebrale
               AND complessita_film IS intricata
-              THEN affinita IS considerare;
+              THEN affinita_complessita IS considerare;
 
     // Se sono in mood "filosofico", i film semplici o lineari sono tempo perso
     RULE 12 : IF complessita IS cerebrale
               AND (complessita_film IS semplice OR complessita_film IS lineare)
-              THEN affinita IS scartare;
+              THEN affinita_complessita IS scartare;
 
 END_RULEBLOCK
 

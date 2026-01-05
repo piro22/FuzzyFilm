@@ -7,7 +7,7 @@ VAR_INPUT
 END_VAR
 
 VAR_OUTPUT
-    affinita : REAL;
+    affinita_realismo : REAL;
 END_VAR
 
 
@@ -28,7 +28,7 @@ END_FUZZIFY
 
 
 
-DEFUZZIFY affinita
+DEFUZZIFY affinita_realismo
     TERM scartare := (0, 0) (0, 1) (0.15, 1) (0.4, 0);
     TERM considerare := gauss 0.5 0.15;
     TERM imperdibile := (0.6, 0) (0.85, 1) (1, 1) (1, 0);
@@ -48,18 +48,18 @@ RULEBLOCK Rules
     // Cerco storie vere, biopic, drammi concreti. Niente magia.
     RULE 1 : IF fantasia IS realistico
              AND fantasia_film IS realistico
-             THEN affinita IS imperdibile;
+             THEN affinita_realismo IS imperdibile;
 
     // Un film "stilizzato" (es. colori particolari, regia artistica) è accettabile,
     // purché non ci siano draghi o alieni.
     RULE 2 : IF fantasia IS realistico
              AND fantasia_film IS stilizzato
-             THEN affinita IS considerare;
+             THEN affinita_realismo IS considerare;
 
     // Se cerco la realtà, il surreale o il fantasy mi danno fastidio.
     RULE 3 : IF fantasia IS realistico
              AND (fantasia_film IS surreale OR fantasia_film IS fantasy)
-             THEN affinita IS scartare;
+             THEN affinita_realismo IS scartare;
 
 
     // -----------------------------------------------------------------
@@ -69,18 +69,18 @@ RULEBLOCK Rules
     // Cerco un'estetica curata (es. Wes Anderson), realtà leggermente alterata.
     RULE 4 : IF fantasia IS stilizzato
              AND fantasia_film IS stilizzato
-             THEN affinita IS imperdibile;
+             THEN affinita_realismo IS imperdibile;
 
     // Accetto volentieri sia il realismo (se ben fatto) sia il surreale (se artistico).
     // Sono flessibile verso i vicini.
     RULE 5 : IF fantasia IS stilizzato
              AND (fantasia_film IS realistico OR fantasia_film IS surreale)
-             THEN affinita IS considerare;
+             THEN affinita_realismo IS considerare;
 
     // Il Fantasy puro (es. spade e stregoneria) è spesso troppo diverso dallo "stile" che cerco.
     RULE 6 : IF fantasia IS stilizzato
              AND fantasia_film IS fantasy
-             THEN affinita IS scartare;
+             THEN affinita_realismo IS scartare;
 
 
     // -----------------------------------------------------------------
@@ -90,17 +90,17 @@ RULEBLOCK Rules
     // Cerco logiche da sogno, simbolismi, cose strane (es. Lynch).
     RULE 7 : IF fantasia IS surreale
              AND fantasia_film IS surreale
-             THEN affinita IS imperdibile;
+             THEN affinita_realismo IS imperdibile;
 
     // Un film Fantasy va bene (è comunque irreale), e uno Stilizzato va bene (è visivo).
     RULE 8 : IF fantasia IS surreale
              AND (fantasia_film IS stilizzato OR fantasia_film IS fantasy)
-             THEN affinita IS considerare;
+             THEN affinita_realismo IS considerare;
 
     // Il realismo puro è noioso per me in questo momento.
     RULE 9 : IF fantasia IS surreale
              AND fantasia_film IS realistico
-             THEN affinita IS scartare;
+             THEN affinita_realismo IS scartare;
 
 
     // -----------------------------------------------------------------
@@ -110,17 +110,17 @@ RULEBLOCK Rules
     // Voglio mondi inventati, magia, sci-fi spinto.
     RULE 10 : IF fantasia IS fantasy
               AND fantasia_film IS fantasy
-              THEN affinita IS imperdibile;
+              THEN affinita_realismo IS imperdibile;
 
     // Il surreale può piacermi perché contiene elementi impossibili.
     RULE 11 : IF fantasia IS fantasy
               AND fantasia_film IS surreale
-              THEN affinita IS considerare;
+              THEN affinita_realismo IS considerare;
 
     // Se voglio vedere draghi o astronavi, il realismo o il solo stile visivo non mi bastano.
     RULE 12 : IF fantasia IS fantasy
               AND (fantasia_film IS realistico OR fantasia_film IS stilizzato)
-              THEN affinita IS scartare;
+              THEN affinita_realismo IS scartare;
 
 END_RULEBLOCK
 

@@ -7,7 +7,7 @@ VAR_INPUT
 END_VAR
 
 VAR_OUTPUT
-    affinita : REAL;
+    affinita_finale : REAL;
 END_VAR
 
 
@@ -27,7 +27,7 @@ END_FUZZIFY
 
 
 
-DEFUZZIFY affinita
+DEFUZZIFY affinita_finale
     TERM scartare := (0, 0) (0, 1) (0.15, 1) (0.4, 0);
     TERM considerare := gauss 0.5 0.15;
     TERM imperdibile := (0.6, 0) (0.85, 1) (1, 1) (1, 0);
@@ -46,17 +46,17 @@ RULEBLOCK Rules
     // Se non voglio emozioni forti, il lieto fine è l'unica salvezza.
     RULE 1 : IF intensita_emozioni_post_film IS nulla
              AND finale_film IS lieto
-             THEN affinita IS imperdibile;
+             THEN affinita_finale IS imperdibile;
 
     // Il malinconico è accettabile ma non ideale.
     RULE 2 : IF intensita_emozioni_post_film IS nulla
              AND finale_film IS malinconico
-             THEN affinita IS considerare;
+             THEN affinita_finale IS considerare;
 
     // Se voglio relax, il triste o il teso mi rovinano la serata.
     RULE 3 : IF intensita_emozioni_post_film IS nulla
              AND (finale_film IS triste OR finale_film IS teso)
-             THEN affinita IS scartare;
+             THEN affinita_finale IS scartare;
 
 
     // -----------------------------------------------------------
@@ -65,13 +65,13 @@ RULEBLOCK Rules
     // Il malinconico (realistico) e il teso (avvincente) sono il top per chi cerca coinvolgimento.
     RULE 4 : IF intensita_emozioni_post_film IS media
              AND (finale_film IS malinconico OR finale_film IS teso)
-             THEN affinita IS imperdibile;
+             THEN affinita_finale IS imperdibile;
 
     // Il lieto fine va bene (considerare), ma forse è banale.
     // Il triste va bene (considerare), ma forse è troppo pesante.
     RULE 5 : IF intensita_emozioni_post_film IS media
              AND (finale_film IS lieto OR finale_film IS triste)
-             THEN affinita IS considerare;
+             THEN affinita_finale IS considerare;
 
 
     // -----------------------------------------------------------
@@ -80,17 +80,17 @@ RULEBLOCK Rules
     // Se cerco emozioni forti, voglio il triste (pianto) o il teso (shock).
     RULE 6 : IF intensita_emozioni_post_film IS alta
              AND (finale_film IS triste OR finale_film IS teso)
-             THEN affinita IS imperdibile;
+             THEN affinita_finale IS imperdibile;
 
     // Il malinconico è un po' leggero per me che voglio emozioni forti.
     RULE 7 : IF intensita_emozioni_post_film IS alta
              AND finale_film IS malinconico
-             THEN affinita IS considerare;
+             THEN affinita_finale IS considerare;
 
     // Se voglio emozioni forti e finisce tutto "vissero felici e contenti", mi annoio.
     RULE 8 : IF intensita_emozioni_post_film IS alta
              AND finale_film IS lieto
-             THEN affinita IS scartare;
+             THEN affinita_finale IS scartare;
 
 END_RULEBLOCK
 
