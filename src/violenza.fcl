@@ -11,25 +11,25 @@ VAR_OUTPUT
 END_VAR
 
 FUZZIFY violenza
-    TERM per_tutti := (0, 1) (1, 1) (2, 0);
+    TERM per_tutti := (0, 0) (0, 1) (1, 1) (2, 0);
     TERM lieve := (2, 0) (3, 1) (4, 0);
     TERM moderato := (4, 0) (5, 1) (6, 0);
     TERM esplicito := (6, 0) (7, 1) (8, 0);
-    TERM estremo := (8, 0) (9, 1) (10, 1);
+    TERM estremo := (8, 0) (9, 1) (10, 1) (10, 0);
 END_FUZZIFY
 
 FUZZIFY violenza_film
-    TERM per_tutti := (0, 1) (1, 1) (2, 0);
+    TERM per_tutti := (0, 0) (0, 1) (1, 1) (2, 0);
     TERM lieve := (2, 0) (3, 1) (4, 0);
     TERM moderato := (4, 0) (5, 1) (6, 0);
     TERM esplicito := (6, 0) (7, 1) (8, 0);
-    TERM estremo := (8, 0) (9, 1) (10, 1);
+    TERM estremo := (8, 0) (9, 1) (10, 1) (10, 0);
 END_FUZZIFY
 
 DEFUZZIFY affinita
-    TERM scartare := (0, 1) (0.15, 1) (0.3, 0.7) (0.35, 0.5) (0.4, 0);
-    TERM considerare := (0.2, 0) (0.3, 0.60) (0.4, 0.85) (0.5, 1) (0.6, 0.85) (0.7, 0.60) (0.8, 0);
-    TERM imperdibile := (0.6, 0) (0.65, 0.5) (0.7, 0.7) (0.85, 1) (1, 1);
+    TERM scartare := (0, 0) (0, 1) (0.15, 1) (0.4, 0);
+    TERM considerare := gauss 0.5 0.15;
+    TERM imperdibile := (0.6, 0) (0.85, 1) (1, 1) (1, 0);
     METHOD : COG;
     DEFAULT := 0;
 END_DEFUZZIFY

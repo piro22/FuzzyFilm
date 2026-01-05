@@ -1,13 +1,13 @@
 public class Film implements Comparable<Film>{
-    String titolo;
-    String categoria;
-    int durata;
-    String finale;
-    String complessita;
-    String realismo;
-    String contenutiEspliciti;
-    String tono;
-    Double score;
+    private String titolo;
+    private String categoria;
+    private int durata;
+    private String finale;
+    private String complessita;
+    private String realismo;
+    private String contenutiEspliciti;
+    private String tono;
+    private Double score;
 
 
     public Film(String titolo, String categoria, int indice, String finale, String complessita, String realismo, String contenutiEspliciti, String tono) {

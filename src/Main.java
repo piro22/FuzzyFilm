@@ -152,7 +152,7 @@ public class Main {
             gestisciGrafici(fisViolenza, "Violenza");
         }
 
-        String[] optionsViolenza = {"per_tutti", "lieve", "moderato", "forte", "estremo"};
+        String[] optionsViolenza = {"perTutti", "lieve", "moderato", "forte", "estremo"};
 
         String VIOLENZA_USER = (String) JOptionPane.showInputDialog(
                 null,
@@ -555,12 +555,6 @@ public class Main {
             if(level > 0){
                 System.out.println("La regola si è attivata con forza: " + level);
                 System.out.println("Regola: " + r);
-
-                // QUI HAI I DATI PER IL GRAFICO 1:
-                // 1. La forma della curva è data dal conseguente della regola (es. 'Good')
-                // 2. L'altezza massima della curva (il taglio) è 'level'
-                // Se usi JFreeChart, disegneresti la funzione di appartenenza 'Good'
-                // applicando un Math.min(y, level).
             }
         }
         Variable outputVariable = fisTone.getFunctionBlock("calcolo_affinita").getVariable("affinita");
@@ -591,16 +585,130 @@ public class Main {
             if(level > 0){
                 System.out.println("La regola si è attivata con forza: " + level);
                 System.out.println("Regola: " + r);
-
-                // QUI HAI I DATI PER IL GRAFICO 1:
-                // 1. La forma della curva è data dal conseguente della regola (es. 'Good')
-                // 2. L'altezza massima della curva (il taglio) è 'level'
-                // Se usi JFreeChart, disegneresti la funzione di appartenenza 'Good'
-                // applicando un Math.min(y, level).
             }
         }
         Variable outputVariable1 = fisIntensita.getFunctionBlock("calcolo_affinita").getVariable("affinita");
         JFuzzyChart.get().chart(outputVariable1, outputVariable1.getDefuzzifier(), true);
+
+
+
+
+        fileName = "src/violenza.fcl";
+        FIS fisViolenza = FIS.load(fileName, true);
+        if (fisViolenza == null) {
+            System.err.println("Errore caricamento FCL");
+            return;
+        }
+
+        fisViolenza.setVariable("violenza", numViolenza(VIOLENZA_USER));
+        fisViolenza.setVariable("violenza_film", numViolenza(BEST.getContenutiEspliciti()));
+        fisViolenza.evaluate();
+
+        ruleBlock = fisViolenza.getFunctionBlock("calcolo_affinita").getFuzzyRuleBlock("Rules");
+
+        System.out.println("\n--- Analisi Regole Attive Violenza ---");
+
+        for (Rule r : ruleBlock.getRules()) {
+            // Il degreeOfSupport è il valore (0.0 - 1.0) che "taglia" il grafico di uscita
+            double level = r.getDegreeOfSupport();
+
+            if(level > 0){
+                System.out.println("La regola si è attivata con forza: " + level);
+                System.out.println("Regola: " + r);
+            }
+        }
+        Variable outputVariable3 = fisViolenza.getFunctionBlock("calcolo_affinita").getVariable("affinita");
+        JFuzzyChart.get().chart(outputVariable3, outputVariable3.getDefuzzifier(), true);
+
+
+
+
+        fileName = "src/tempo.fcl";
+        FIS fisTempo = FIS.load(fileName, true);
+        if (fisTempo == null) {
+            System.err.println("Errore caricamento FCL");
+            return;
+        }
+
+        fisTempo.setVariable("tempo_a_disposizione", Double.parseDouble(TEMPO_USER));
+        fisTempo.setVariable("durata_film", BEST.getDurata());
+        fisTempo.evaluate();
+
+        ruleBlock = fisTempo.getFunctionBlock("calcolo_affinita").getFuzzyRuleBlock("Rules");
+
+        System.out.println("\n--- Analisi Regole Attive Tempo ---");
+
+        for (Rule r : ruleBlock.getRules()) {
+            // Il degreeOfSupport è il valore (0.0 - 1.0) che "taglia" il grafico di uscita
+            double level = r.getDegreeOfSupport();
+
+            if(level > 0){
+                System.out.println("La regola si è attivata con forza: " + level);
+                System.out.println("Regola: " + r);
+            }
+        }
+        Variable outputVariable4 = fisTempo.getFunctionBlock("calcolo_affinita").getVariable("affinita");
+        JFuzzyChart.get().chart(outputVariable4, outputVariable4.getDefuzzifier(), true);
+
+
+
+
+        fileName = "src/finale.fcl";
+        FIS fisFinale = FIS.load(fileName, true);
+        if (fisFinale == null) {
+            System.err.println("Errore caricamento FCL");
+            return;
+        }
+
+        fisFinale.setVariable("intensita_emozioni_post_film", Double.parseDouble(FINALE_USER));
+        fisFinale.setVariable("finale_film", numFinale(BEST.getFinale()));
+        fisFinale.evaluate();
+
+        ruleBlock = fisFinale.getFunctionBlock("calcolo_affinita").getFuzzyRuleBlock("Rules");
+
+        System.out.println("\n--- Analisi Regole Attive Finale ---");
+
+        for (Rule r : ruleBlock.getRules()) {
+            // Il degreeOfSupport è il valore (0.0 - 1.0) che "taglia" il grafico di uscita
+            double level = r.getDegreeOfSupport();
+
+            if(level > 0){
+                System.out.println("La regola si è attivata con forza: " + level);
+                System.out.println("Regola: " + r);
+            }
+        }
+        Variable outputVariable5 = fisFinale.getFunctionBlock("calcolo_affinita").getVariable("affinita");
+        JFuzzyChart.get().chart(outputVariable5, outputVariable5.getDefuzzifier(), true);
+
+
+
+
+        fileName = "src/complessitaNarrativa.fcl";
+        FIS fisComplessita = FIS.load(fileName, true);
+        if (fisComplessita == null) {
+            System.err.println("Errore caricamento FCL");
+            return;
+        }
+
+        fisComplessita.setVariable("complessita", Double.parseDouble(COMPLESSITA_USER));
+        fisComplessita.setVariable("complessita_film", numComplessita(BEST.getComplessita()));
+        fisComplessita.evaluate();
+
+        ruleBlock = fisComplessita.getFunctionBlock("calcolo_affinita").getFuzzyRuleBlock("Rules");
+
+        System.out.println("\n--- Analisi Regole Attive Complessita ---");
+
+        for (Rule r : ruleBlock.getRules()) {
+            // Il degreeOfSupport è il valore (0.0 - 1.0) che "taglia" il grafico di uscita
+            double level = r.getDegreeOfSupport();
+
+            if(level > 0){
+                System.out.println("La regola si è attivata con forza: " + level);
+                System.out.println("Regola: " + r);
+            }
+        }
+        Variable outputVariable6 = fisComplessita.getFunctionBlock("calcolo_affinita").getVariable("affinita");
+        JFuzzyChart.get().chart(outputVariable6, outputVariable6.getDefuzzifier(), true);
 
 
 
@@ -627,12 +735,6 @@ public class Main {
             if(level > 0){
                 System.out.println("La regola si è attivata con forza: " + level);
                 System.out.println("Regola: " + r);
-
-                // QUI HAI I DATI PER IL GRAFICO 1:
-                // 1. La forma della curva è data dal conseguente della regola (es. 'Good')
-                // 2. L'altezza massima della curva (il taglio) è 'level'
-                // Se usi JFreeChart, disegneresti la funzione di appartenenza 'Good'
-                // applicando un Math.min(y, level).
             }
         }
         Variable outputVariable2 = fisRealismo.getFunctionBlock("calcolo_affinita").getVariable("affinita");
