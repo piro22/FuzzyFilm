@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.awt.Dimension;
+import java.awt.Window;
+import java.awt.Frame;
+import java.awt.Dialog;
 
 public class Main {
 
@@ -58,6 +61,7 @@ public class Main {
 
         if(rispostaGrafici==0){
             gestisciGrafici(fisTone, "Tono");
+
         }
 
 
@@ -71,6 +75,8 @@ public class Main {
                 options,
                 options[0]
         );
+
+        chiudiFinestre();
 
         //trasforma input stringa in int
         double tonoNum = numTono(TONO_USER); //c'è gia il metodo in fondo al codice
@@ -120,7 +126,10 @@ public class Main {
 
         // Input Utente intensita
         String INTENSITA_USER = JOptionPane.showInputDialog("Che intensita vuoi che abbia? (0-10)");
+
         fisIntensita.setVariable("intensita", Double.parseDouble(INTENSITA_USER));
+
+        chiudiFinestre();
 
         String topIntensita = "";
         Double top = 0.0;
@@ -163,6 +172,8 @@ public class Main {
                 optionsViolenza,
                 optionsViolenza[0]
         );
+
+        chiudiFinestre();
 
         //trasforma input stringa in int
         double violenzaNum = numViolenza(VIOLENZA_USER); //c'è il metodo in fondo al codice
@@ -211,6 +222,7 @@ public class Main {
 
         // Input Utente tempo
         String TEMPO_USER = JOptionPane.showInputDialog("Quanto tempo hai a disposizione? (0-240 minuti)");
+        chiudiFinestre();
 
         fisTempo.setVariable("tempo_a_disposizione", Double.parseDouble(TEMPO_USER));
 
@@ -247,6 +259,7 @@ public class Main {
 
         // Input Utente finale
         String FINALE_USER = JOptionPane.showInputDialog("Quanto emozionante vuoi il finale? (0-10)");
+        chiudiFinestre();
         fisFinale.setVariable("intensita_emozioni_post_film", Double.parseDouble(FINALE_USER));
 
         String topFinale = "";
@@ -281,7 +294,7 @@ public class Main {
 
         // Input Utente complessita
         String COMPLESSITA_USER = JOptionPane.showInputDialog("Quanto complessa vuoi la trama? (0-10)");
-
+        chiudiFinestre();
         fisComplessita.setVariable("complessita", Double.parseDouble(COMPLESSITA_USER));
 
         String topComplessita = "";
@@ -316,7 +329,7 @@ public class Main {
 
         // Input Utente realismo
         String REALISMO_USER = JOptionPane.showInputDialog("Quanto vuoi fantasioso il film? (0-10)");
-
+        chiudiFinestre();
         fisRealismo.setVariable("fantasia", Double.parseDouble(REALISMO_USER));
 
         String topRealismo = "";
@@ -526,6 +539,8 @@ public class Main {
             JFuzzyChart.get().chart(var, var.getDefuzzifier(), true);
         }
         */
+
+
         }
     }
 
@@ -741,4 +756,32 @@ public class Main {
         JFuzzyChart.get().chart(outputVariable2, outputVariable2.getDefuzzifier(), true);
 
     }
+
+    //serve per cancellare le finestre create da jfuzzychart perchè non vengono "catturate"
+    // le finestre che apre la libreria
+
+    private static void chiudiFinestre()     {
+        for (Window window : Window.getWindows()) {
+        // Controlliamo se la finestra è visibile
+        if (window.isDisplayable()) {
+            // Se vuoi evitare di chiudere la finestra principale,
+            // metti il titolo della tua app qui sotto
+            String titolo = "";
+            if (window instanceof Frame) titolo = ((Frame) window).getTitle();
+            if (window instanceof Dialog) titolo = ((Dialog) window).getTitle();
+
+            // Chiudi tutto ciò che NON è la tua finestra principale
+            // Sostituisci "MiaApp" con il titolo del tuo programma
+           //if (!titolo.equals("TitoloDellaTuaFinestraPrincipale")) {
+                window.setVisible(false);
+                window.dispose();
+          //  }
+        }
+    }
+}
+
+
+
+
+
 }
