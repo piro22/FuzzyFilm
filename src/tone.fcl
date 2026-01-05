@@ -12,23 +12,23 @@ END_VAR
 
 
 FUZZIFY tone
-    TERM dark := (0, 1) (1, 1) (2, 0);
+    TERM dark := (0, 0) (1, 1) (2, 0);
     TERM serio := (1.5, 0) (2.5, 1) (3.5, 0);
     TERM bilanciato := (3, 0) (4, 1) (5, 0);
     TERM leggero := (4.5, 0) (5.5, 1) (6.5, 0);
     TERM comico := (6, 0) (7, 1) (8, 0);
     TERM epico := (7.5, 0) (8.5, 1) (9.5, 0);
-    TERM inquietante := (9, 0) (10, 1) (11, 1);
+    TERM inquietante := (9, 0) (10, 1) (11, 0);
 END_FUZZIFY
 
 FUZZIFY tono_film
-    TERM dark := (0, 1) (1, 1) (2, 0);
+    TERM dark := (0, 0) (1, 1) (2, 0);
     TERM serio := (1.5, 0) (2.5, 1) (3.5, 0);
     TERM bilanciato := (3, 0) (4, 1) (5, 0);
     TERM leggero := (4.5, 0) (5.5, 1) (6.5, 0);
     TERM comico := (6, 0) (7, 1) (8, 0);
     TERM epico := (7.5, 0) (8.5, 1) (9.5, 0);
-    TERM inquietante := (9, 0) (10, 1) (11, 1);
+    TERM inquietante := (9, 0) (10, 1) (11, 0);
 END_FUZZIFY
 
 DEFUZZIFY affinita

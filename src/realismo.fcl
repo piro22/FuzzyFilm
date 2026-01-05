@@ -20,7 +20,7 @@ FUZZIFY fantasia
 END_FUZZIFY
 
 FUZZIFY fantasia_film
-    TERM realistico := (0, 1) (0.5, 1) (1, 0);
+    TERM realistico := (0, 0) (0.5, 1) (1, 0);
     TERM stilizzato := (1, 0) (1.5, 1) (2, 0);
     TERM surreale := (2, 0) (2.5, 1) (3, 0);
     TERM fantasy := (3, 0) (3.5, 1) (4, 0);
