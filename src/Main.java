@@ -115,7 +115,7 @@ public class Main {
             //attivo il fuzzy
             fisTone.evaluate();
             //recupero output e lo salvo
-            double idealIndex = fisTone.getVariable("affinita").getValue();
+            double idealIndex = fisTone.getVariable("affinita_tono").getValue();
             scoreTone.add(idealIndex);
             System.out.println(databaseFilm.get(i).getTitolo() + " -> score tono: " + idealIndex);
             //per capire il migliore
@@ -162,7 +162,7 @@ public class Main {
 
             fisIntensita.setVariable("categoria_film", numCategoria(categoria));
             fisIntensita.evaluate();
-            double idealIndex = fisIntensita.getVariable("affinita").getValue();
+            double idealIndex = fisIntensita.getVariable("affinita_intensita").getValue();
             scoreIntensita.add(idealIndex);
             System.out.println(databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex);
             if (idealIndex > top) {
@@ -226,7 +226,7 @@ public class Main {
             //attivo il fuzzy
             fisViolenza.evaluate();
             //ottengo il risultato
-            double idealIndex = fisViolenza.getVariable("affinita").getValue();
+            double idealIndex = fisViolenza.getVariable("affinita_violenza").getValue();
             scoreViolenza.add(idealIndex);
             System.out.println(databaseFilm.get(i).getTitolo() + " -> score violenza: " + idealIndex);
             //serve per capire qual è il rate migliore
@@ -272,7 +272,7 @@ public class Main {
 
             fisTempo.setVariable("durata_film", durata);
             fisTempo.evaluate();
-            double idealIndex = fisTempo.getVariable("affinita").getValue();
+            double idealIndex = fisTempo.getVariable("affinita_tempo").getValue();
             scoreTempo.add(idealIndex);
             System.out.println(databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex);
             if (idealIndex > top1) {
@@ -316,7 +316,7 @@ public class Main {
 
             fisFinale.setVariable("finale_film", numFinale(finale));
             fisFinale.evaluate();
-            double idealIndex = fisFinale.getVariable("affinita").getValue();
+            double idealIndex = fisFinale.getVariable("affinita_finale").getValue();
             scoreFinale.add(idealIndex);
             System.out.println(databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex);
             if (idealIndex > top2) {
@@ -360,7 +360,7 @@ public class Main {
 
             fisComplessita.setVariable("complessita_film", numComplessita(cmplxty));
             fisComplessita.evaluate();
-            double idealIndex = fisComplessita.getVariable("affinita").getValue();
+            double idealIndex = fisComplessita.getVariable("affinita_complessita").getValue();
             scoreComplessita.add(idealIndex);
             System.out.println(databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex);
             if (idealIndex > top3) {
@@ -404,7 +404,7 @@ public class Main {
 
             fisRealismo.setVariable("fantasia_film", numRealismo(real));
             fisRealismo.evaluate();
-            double idealIndex = fisRealismo.getVariable("affinita").getValue();
+            double idealIndex = fisRealismo.getVariable("affinita_realismo").getValue();
             scoreRealismo.add(idealIndex);
             System.out.println(databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex);
             if (idealIndex > top4) {
@@ -677,7 +677,7 @@ public class Main {
                 System.out.println("Regola: " + r);
             }
         }
-        Variable outputVariable = fisTone.getFunctionBlock("calcolo_affinita").getVariable("affinita");
+        Variable outputVariable = fisTone.getFunctionBlock("calcolo_affinita").getVariable("affinita_tono");
         JFuzzyChart.get().chart(outputVariable, outputVariable.getDefuzzifier(), true);
 
 
@@ -705,7 +705,7 @@ public class Main {
                 System.out.println("Regola: " + r);
             }
         }
-        Variable outputVariable1 = fisIntensita.getFunctionBlock("calcolo_affinita").getVariable("affinita");
+        Variable outputVariable1 = fisIntensita.getFunctionBlock("calcolo_affinita").getVariable("affinita_intensita");
         JFuzzyChart.get().chart(outputVariable1, outputVariable1.getDefuzzifier(), true);
 
 
@@ -733,7 +733,7 @@ public class Main {
                 System.out.println("Regola: " + r);
             }
         }
-        Variable outputVariable3 = fisViolenza.getFunctionBlock("calcolo_affinita").getVariable("affinita");
+        Variable outputVariable3 = fisViolenza.getFunctionBlock("calcolo_affinita").getVariable("affinita_violenza");
         JFuzzyChart.get().chart(outputVariable3, outputVariable3.getDefuzzifier(), true);
 
 
@@ -761,7 +761,7 @@ public class Main {
                 System.out.println("Regola: " + r);
             }
         }
-        Variable outputVariable4 = fisTempo.getFunctionBlock("calcolo_affinita").getVariable("affinita");
+        Variable outputVariable4 = fisTempo.getFunctionBlock("calcolo_affinita").getVariable("affinita_tempo");
         JFuzzyChart.get().chart(outputVariable4, outputVariable4.getDefuzzifier(), true);
 
 
@@ -789,7 +789,7 @@ public class Main {
                 System.out.println("Regola: " + r);
             }
         }
-        Variable outputVariable5 = fisFinale.getFunctionBlock("calcolo_affinita").getVariable("affinita");
+        Variable outputVariable5 = fisFinale.getFunctionBlock("calcolo_affinita").getVariable("affinita_finale");
         JFuzzyChart.get().chart(outputVariable5, outputVariable5.getDefuzzifier(), true);
 
 
@@ -817,7 +817,7 @@ public class Main {
                 System.out.println("Regola: " + r);
             }
         }
-        Variable outputVariable6 = fisComplessita.getFunctionBlock("calcolo_affinita").getVariable("affinita");
+        Variable outputVariable6 = fisComplessita.getFunctionBlock("calcolo_affinita").getVariable("affinita_complessita");
         JFuzzyChart.get().chart(outputVariable6, outputVariable6.getDefuzzifier(), true);
 
 
@@ -845,7 +845,7 @@ public class Main {
                 System.out.println("Regola: " + r);
             }
         }
-        Variable outputVariable2 = fisRealismo.getFunctionBlock("calcolo_affinita").getVariable("affinita");
+        Variable outputVariable2 = fisRealismo.getFunctionBlock("calcolo_affinita").getVariable("affinita_realismo");
         JFuzzyChart.get().chart(outputVariable2, outputVariable2.getDefuzzifier(), true);
 
     }

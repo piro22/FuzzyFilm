@@ -46,12 +46,12 @@ RULEBLOCK Rules
     // Se ho poco tempo, posso guardare solo cose brevi (corti o film brevissimi)
     RULE 1 : IF tempo_a_disposizione IS poco
              AND durata_film IS bassa
-             THEN affinita IS imperdibile;
+             THEN affinita_tempo IS imperdibile;
 
     // Se ho poco tempo, qualsiasi cosa media, lunga o lunghissima è impossibile da finire
     RULE 2 : IF tempo_a_disposizione IS poco
              AND (durata_film IS media OR durata_film IS alta OR durata_film IS altissima)
-             THEN affinita IS scartare;
+             THEN affinita_tempo IS scartare;
 
 
     // -----------------------------------------------------------------
@@ -61,17 +61,17 @@ RULEBLOCK Rules
     // Il film "medio" (90-110 min) è perfetto per una serata standard
     RULE 3 : IF tempo_a_disposizione IS medio
              AND durata_film IS media
-             THEN affinita IS imperdibile;
+             THEN affinita_tempo IS imperdibile;
 
     // Se il film è molto breve, va bene lo stesso (mi avanza tempo), ma non è l'uso "ottimo"
     RULE 4 : IF tempo_a_disposizione IS medio
              AND durata_film IS bassa
-             THEN affinita IS considerare;
+             THEN affinita_tempo IS considerare;
 
     // Se il film è lungo o lunghissimo, rischio di non finirlo o fare troppo tardi
     RULE 5 : IF tempo_a_disposizione IS medio
              AND (durata_film IS alta OR durata_film IS altissima)
-             THEN affinita IS scartare;
+             THEN affinita_tempo IS scartare;
 
 
     // -----------------------------------------------------------------
@@ -81,17 +81,17 @@ RULEBLOCK Rules
     // Se ho tanto tempo, i film lunghi o lunghissimi (es. Interstellar, Avatar) sono la scelta migliore
     RULE 6 : IF tempo_a_disposizione IS tanto
              AND (durata_film IS alta OR durata_film IS altissima)
-             THEN affinita IS imperdibile;
+             THEN affinita_tempo IS imperdibile;
 
     // Un film di durata media va bene, ma forse volevo un'esperienza più impegnativa
     RULE 7 : IF tempo_a_disposizione IS tanto
              AND durata_film IS media
-             THEN affinita IS considerare;
+             THEN affinita_tempo IS considerare;
 
     // Se ho 3-4 ore libere e guardo un corto di 10 minuti, è un po' deludente (oppure "scartare" se vuoi essere drastico)
     RULE 8 : IF tempo_a_disposizione IS tanto
              AND durata_film IS bassa
-             THEN affinita IS scartare;
+             THEN affinita_tempo IS scartare;
 
 END_RULEBLOCK
 
