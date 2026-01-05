@@ -8,6 +8,7 @@ import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.awt.Dimension;
@@ -70,15 +71,24 @@ public class Main {
 
 
         String[] options = {"dark", "serio", "bilanciato", "leggero", "comico", "epico", "inquietante"};
-        String TONO_USER = (String) JOptionPane.showInputDialog(
-                null,
-                "Scegli il tono del film:",
-                "Input Tono",
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                options,
-                options[0]
-        );
+        String TONO_USER = "";
+
+        while(!Arrays.asList(options).contains(TONO_USER)){
+            TONO_USER = (String) JOptionPane.showInputDialog(
+                    null,
+                    "Scegli il tono del film:",
+                    "Input Tono",
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    options,
+                    options[0]
+            );
+
+            if (TONO_USER == null) {
+                System.out.println("Operazione annullata dall'utente.");
+                break; // O System.exit(0);
+            }
+        }
 
 
         try {
@@ -87,11 +97,6 @@ public class Main {
             e.printStackTrace();
         }
 
-        try {
-            Thread.sleep(200);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
         chiudiFinestre();
 
@@ -142,7 +147,31 @@ public class Main {
         }
 
         // Input Utente intensita
-        String INTENSITA_USER = JOptionPane.showInputDialog("Che intensita vuoi che abbia? (0-10)");
+        String INTENSITA_USER = "";
+        double intensitaFinale = -1.0; // Variabile dove salveremo il numero convertito
+        boolean isValido = false;      // Flag per controllare l'uscita dal ciclo
+
+        while (!isValido) {
+            INTENSITA_USER = JOptionPane.showInputDialog("Che intensità vuoi che abbia? (0.0 - 10.0)");
+
+            if (INTENSITA_USER == null) {
+                System.out.println("Operazione annullata.");
+                break;
+            }
+
+            try {
+                intensitaFinale = Double.parseDouble(INTENSITA_USER);
+
+                if (intensitaFinale >= 0.0 && intensitaFinale <= 10.0) {
+                    isValido = true;
+                } else {
+                    System.err.println("Not a valid Number");
+                }
+
+            } catch (NumberFormatException e) {
+                System.err.println("Nan");
+            }
+        }
 
         fisIntensita.setVariable("intensita", Double.parseDouble(INTENSITA_USER));
 
@@ -188,16 +217,25 @@ public class Main {
         }
 
         String[] optionsViolenza = {"perTutti", "lieve", "moderato", "forte", "estremo"};
+        String VIOLENZA_USER = "";
 
-        String VIOLENZA_USER = (String) JOptionPane.showInputDialog(
-                null,
-                "Che livello di violenza accetti?",
-                "Input Violenza",
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                optionsViolenza,
-                optionsViolenza[0]
-        );
+        while(!Arrays.asList(options).contains(TONO_USER)){
+            VIOLENZA_USER = (String) JOptionPane.showInputDialog(
+                    null,
+                    "Che livello di violenza accetti?",
+                    "Input Violenza",
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    optionsViolenza,
+                    optionsViolenza[0]
+            );
+
+            if (VIOLENZA_USER == null) {
+                System.out.println("Operazione annullata dall'utente.");
+                break; // O System.exit(0);
+            }
+        }
+
 
         try {
             Thread.sleep(200);
@@ -253,7 +291,32 @@ public class Main {
         }
 
         // Input Utente tempo
-        String TEMPO_USER = JOptionPane.showInputDialog("Quanto tempo hai a disposizione? (0-240 minuti)");
+        String TEMPO_USER = "";
+        int tempoFinale = -1; // Variabile dove salveremo il numero convertito
+        boolean isValidoTempo = false;      // Flag per controllare l'uscita dal ciclo
+
+        while (!isValidoTempo) {
+            TEMPO_USER = JOptionPane.showInputDialog("Quanto tempo hai a disposizione? (0-240 minuti)");
+
+            if (TEMPO_USER == null) {
+                System.out.println("Operazione annullata.");
+                break;
+            }
+
+            try {
+                tempoFinale = Integer.parseInt(TEMPO_USER);
+
+                if (tempoFinale >= 0 && tempoFinale <= 240) {
+                    isValidoTempo = true;
+                } else {
+                    System.err.println("Not a valid Number");
+                }
+
+            } catch (NumberFormatException e) {
+                System.err.println("Nan");
+            }
+        }
+
         try {
             Thread.sleep(200);
         } catch (InterruptedException e) {
@@ -298,7 +361,33 @@ public class Main {
         }
 
         // Input Utente finale
-        String FINALE_USER = JOptionPane.showInputDialog("Quanto emozionante vuoi il finale? (0-10)");
+        String FINALE_USER = "";
+        Double finaleFinale = -1.0; // Variabile dove salveremo il numero convertito
+        boolean isValidoFinale = false;      // Flag per controllare l'uscita dal ciclo
+
+        while (!isValidoFinale) {
+            FINALE_USER = JOptionPane.showInputDialog("Quanto emozionante vuoi il finale? (0-10)");
+
+            if (FINALE_USER == null) {
+                System.out.println("Operazione annullata.");
+                break;
+            }
+
+            try {
+                finaleFinale = Double.parseDouble(FINALE_USER);
+
+                if (finaleFinale >= 0.0 && finaleFinale <= 10.0) {
+                    isValidoFinale = true;
+                } else {
+                    System.err.println("Not a valid Number");
+                }
+
+            } catch (NumberFormatException e) {
+                System.err.println("Nan");
+            }
+        }
+
+
         try {
             Thread.sleep(200);
         } catch (InterruptedException e) {
@@ -342,7 +431,33 @@ public class Main {
         }
 
         // Input Utente complessita
-        String COMPLESSITA_USER = JOptionPane.showInputDialog("Quanto complessa vuoi la trama? (0-10)");
+        String COMPLESSITA_USER = "";
+        Double complessitaFinale = -1.0; // Variabile dove salveremo il numero convertito
+        boolean isValidoComplessita = false;      // Flag per controllare l'uscita dal ciclo
+
+        while (!isValidoComplessita) {
+            COMPLESSITA_USER = JOptionPane.showInputDialog("Quanto complessa vuoi la trama? (0-10)");
+
+            if (COMPLESSITA_USER == null) {
+                System.out.println("Operazione annullata.");
+                break;
+            }
+
+            try {
+                complessitaFinale = Double.parseDouble(COMPLESSITA_USER);
+
+                if (complessitaFinale >= 0.0 && complessitaFinale <= 10.0) {
+                    isValidoComplessita = true;
+                } else {
+                    System.err.println("Not a valid Number");
+                }
+
+            } catch (NumberFormatException e) {
+                System.err.println("Nan");
+            }
+        }
+
+
         try {
             Thread.sleep(200);
         } catch (InterruptedException e) {
@@ -386,7 +501,33 @@ public class Main {
         }
 
         // Input Utente realismo
-        String REALISMO_USER = JOptionPane.showInputDialog("Quanto vuoi fantasioso il film? (0-10)");
+        String REALISMO_USER = "";
+        Double realismoFinale = -1.0; // Variabile dove salveremo il numero convertito
+        boolean isValidoRealismo = false;      // Flag per controllare l'uscita dal ciclo
+
+        while (!isValidoRealismo) {
+            REALISMO_USER = JOptionPane.showInputDialog("Quanto vuoi fantasioso il film? (0-10)");
+
+            if (REALISMO_USER == null) {
+                System.out.println("Operazione annullata.");
+                break;
+            }
+
+            try {
+                realismoFinale = Double.parseDouble(REALISMO_USER);
+
+                if (realismoFinale >= 0.0 && realismoFinale <= 10.0) {
+                    isValidoRealismo = true;
+                } else {
+                    System.err.println("Not a valid Number");
+                }
+
+            } catch (NumberFormatException e) {
+                System.err.println("Nan");
+            }
+        }
+
+
         try {
             Thread.sleep(200);
         } catch (InterruptedException e) {
