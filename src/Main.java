@@ -59,7 +59,7 @@ public class Main {
             return;
         }
 
-        if(rispostaGrafici==0){
+        if (rispostaGrafici == 0) {
             gestisciGrafici(fisTone, "Tono");
 
         }
@@ -76,7 +76,21 @@ public class Main {
                 options[0]
         );
 
+
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         chiudiFinestre();
+
 
         //trasforma input stringa in int
         double tonoNum = numTono(TONO_USER); //c'è gia il metodo in fondo al codice
@@ -110,7 +124,6 @@ public class Main {
         System.out.println(topTone + "\n");
 
 
-
         // LOGICA FUZZY PER INTENSITA----------------------------------------------------------------
         //fileName = "FuzzyFilm-master/src/intensita.fcl";
         fileName = "src/intensita.fcl";
@@ -120,7 +133,7 @@ public class Main {
             return;
         }
 
-        if(rispostaGrafici==0){
+        if (rispostaGrafici == 0) {
             gestisciGrafici(fisIntensita, "Intensita");
         }
 
@@ -129,12 +142,18 @@ public class Main {
 
         fisIntensita.setVariable("intensita", Double.parseDouble(INTENSITA_USER));
 
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         chiudiFinestre();
 
         String topIntensita = "";
         Double top = 0.0;
         List<Double> scoreIntensita = new ArrayList<>();
-        for (int i = 0; i<databaseFilm.size(); i++) {
+        for (int i = 0; i < databaseFilm.size(); i++) {
             String categoria = databaseFilm.get(i).getCategoria();
 
             fisIntensita.setVariable("categoria_film", numCategoria(categoria));
@@ -142,7 +161,10 @@ public class Main {
             double idealIndex = fisIntensita.getVariable("affinita").getValue();
             scoreIntensita.add(idealIndex);
             System.out.println(databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex);
-            if (idealIndex > top) {top = idealIndex; topIntensita = databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex;}
+            if (idealIndex > top) {
+                top = idealIndex;
+                topIntensita = databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex;
+            }
         }
         System.out.print("Miglior film in base all'intensità: ");
         System.out.println(topIntensita + "\n");
@@ -157,7 +179,7 @@ public class Main {
             return;
         }
 
-        if(rispostaGrafici==0){
+        if (rispostaGrafici == 0) {
             gestisciGrafici(fisViolenza, "Violenza");
         }
 
@@ -172,6 +194,12 @@ public class Main {
                 optionsViolenza,
                 optionsViolenza[0]
         );
+
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         chiudiFinestre();
 
@@ -216,12 +244,18 @@ public class Main {
             return;
         }
 
-        if(rispostaGrafici==0){
+        if (rispostaGrafici == 0) {
             gestisciGrafici(fisTempo, "Tempo");
         }
 
         // Input Utente tempo
         String TEMPO_USER = JOptionPane.showInputDialog("Quanto tempo hai a disposizione? (0-240 minuti)");
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         chiudiFinestre();
 
         fisTempo.setVariable("tempo_a_disposizione", Double.parseDouble(TEMPO_USER));
@@ -229,7 +263,7 @@ public class Main {
         String topTempo = "";
         Double top1 = 0.0;
         List<Double> scoreTempo = new ArrayList<>();
-        for (int i = 0; i<databaseFilm.size(); i++) {
+        for (int i = 0; i < databaseFilm.size(); i++) {
             int durata = databaseFilm.get(i).getDurata();
 
             fisTempo.setVariable("durata_film", durata);
@@ -237,11 +271,13 @@ public class Main {
             double idealIndex = fisTempo.getVariable("affinita").getValue();
             scoreTempo.add(idealIndex);
             System.out.println(databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex);
-            if (idealIndex > top1) {top1 = idealIndex; topTempo = databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex;}
+            if (idealIndex > top1) {
+                top1 = idealIndex;
+                topTempo = databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex;
+            }
         }
         System.out.print("Miglior film in base alla durata: ");
         System.out.println(topTempo + "\n");
-
 
 
         // LOGICA FUZZY PER FINALE---------------------------------------------------------------------------------------
@@ -253,19 +289,25 @@ public class Main {
             return;
         }
 
-        if(rispostaGrafici==0){
+        if (rispostaGrafici == 0) {
             gestisciGrafici(fisFinale, "Finale");
         }
 
         // Input Utente finale
         String FINALE_USER = JOptionPane.showInputDialog("Quanto emozionante vuoi il finale? (0-10)");
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         chiudiFinestre();
         fisFinale.setVariable("intensita_emozioni_post_film", Double.parseDouble(FINALE_USER));
 
         String topFinale = "";
         Double top2 = 0.0;
         List<Double> scoreFinale = new ArrayList<>();
-        for (int i = 0; i<databaseFilm.size(); i++) {
+        for (int i = 0; i < databaseFilm.size(); i++) {
             String finale = databaseFilm.get(i).getFinale();
 
             fisFinale.setVariable("finale_film", numFinale(finale));
@@ -273,7 +315,10 @@ public class Main {
             double idealIndex = fisFinale.getVariable("affinita").getValue();
             scoreFinale.add(idealIndex);
             System.out.println(databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex);
-            if (idealIndex > top2) {top2 = idealIndex; topFinale = databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex;}
+            if (idealIndex > top2) {
+                top2 = idealIndex;
+                topFinale = databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex;
+            }
         }
         System.out.print("Miglior film in base al finale: ");
         System.out.println(topFinale + "\n");
@@ -288,19 +333,25 @@ public class Main {
             return;
         }
 
-        if(rispostaGrafici==0){
+        if (rispostaGrafici == 0) {
             gestisciGrafici(fisComplessita, "Complessita");
         }
 
         // Input Utente complessita
         String COMPLESSITA_USER = JOptionPane.showInputDialog("Quanto complessa vuoi la trama? (0-10)");
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         chiudiFinestre();
         fisComplessita.setVariable("complessita", Double.parseDouble(COMPLESSITA_USER));
 
         String topComplessita = "";
         Double top3 = 0.0;
         List<Double> scoreComplessita = new ArrayList<>();
-        for (int i = 0; i<databaseFilm.size(); i++) {
+        for (int i = 0; i < databaseFilm.size(); i++) {
             String cmplxty = databaseFilm.get(i).getComplessita();
 
             fisComplessita.setVariable("complessita_film", numComplessita(cmplxty));
@@ -308,7 +359,10 @@ public class Main {
             double idealIndex = fisComplessita.getVariable("affinita").getValue();
             scoreComplessita.add(idealIndex);
             System.out.println(databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex);
-            if (idealIndex > top3) {top3 = idealIndex; topComplessita = databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex;}
+            if (idealIndex > top3) {
+                top3 = idealIndex;
+                topComplessita = databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex;
+            }
         }
         System.out.print("Miglior film in base alla complessita: ");
         System.out.println(topComplessita + "\n");
@@ -323,19 +377,25 @@ public class Main {
             return;
         }
 
-        if(rispostaGrafici==0){
+        if (rispostaGrafici == 0) {
             gestisciGrafici(fisRealismo, "Realismo");
         }
 
         // Input Utente realismo
         String REALISMO_USER = JOptionPane.showInputDialog("Quanto vuoi fantasioso il film? (0-10)");
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         chiudiFinestre();
         fisRealismo.setVariable("fantasia", Double.parseDouble(REALISMO_USER));
 
         String topRealismo = "";
         Double top4 = 0.0;
         List<Double> scoreRealismo = new ArrayList<>();
-        for (int i = 0; i<databaseFilm.size(); i++) {
+        for (int i = 0; i < databaseFilm.size(); i++) {
             String real = databaseFilm.get(i).getRealismo();
 
             fisRealismo.setVariable("fantasia_film", numRealismo(real));
@@ -343,7 +403,10 @@ public class Main {
             double idealIndex = fisRealismo.getVariable("affinita").getValue();
             scoreRealismo.add(idealIndex);
             System.out.println(databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex);
-            if (idealIndex > top4) {top4 = idealIndex; topRealismo = databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex;}
+            if (idealIndex > top4) {
+                top4 = idealIndex;
+                topRealismo = databaseFilm.get(i).getTitolo() + " -> score: " + idealIndex;
+            }
         }
         System.out.print("Miglior film in base alla fantasia: ");
         System.out.println(topRealismo + "\n");
@@ -352,7 +415,7 @@ public class Main {
         // CALCOLO FILM MIGLIORE
         int indexBest = 0;
         Double bestScore = 0.0;
-        for (int i = 0; i<databaseFilm.size(); i++) {
+        for (int i = 0; i < databaseFilm.size(); i++) {
             Double intensitaTemp = scoreIntensita.get(i);
             Double tempoTemp = scoreTempo.get(i);
             Double finaleTemp = scoreFinale.get(i);
@@ -361,7 +424,7 @@ public class Main {
             Double tonoTemp = scoreTone.get(i);
             Double violenzaTemp = scoreViolenza.get(i);
 
-            if(intensitaTemp < SOGLIA || tempoTemp < SOGLIA || finaleTemp < SOGLIA ||
+            if (intensitaTemp < SOGLIA || tempoTemp < SOGLIA || finaleTemp < SOGLIA ||
                     complessitaTemp < SOGLIA || realismoTemp < SOGLIA || tonoTemp < SOGLIA || violenzaTemp < SOGLIA) {
                 databaseFilm.get(i).setScore(0.0);
             } else {
@@ -381,7 +444,7 @@ public class Main {
         System.out.println("\n--- CLASSIFICA FILM ---");
         int i = 1;
         for (Film f : databaseFilm) {
-            if(f.getScore() > 0) { //non mostro quelli con score nullo
+            if (f.getScore() > 0) { //non mostro quelli con score nullo
                 System.out.println(i + ". " + f);
                 i++;
             }
@@ -487,14 +550,22 @@ public class Main {
         }
 
         switch (tono.toLowerCase()) {
-            case "dark": return 1.0;
-            case "serio": return 2.5;
-            case "bilanciato": return 4.0;
-            case "leggero": return 5.5;
-            case "comico": return 7.0;
-            case "epico": return 8.5;
-            case "inquietante": return 10.0;
-            default: return 4.0; //valore neutro va bene bilanciato
+            case "dark":
+                return 1.0;
+            case "serio":
+                return 2.5;
+            case "bilanciato":
+                return 4.0;
+            case "leggero":
+                return 5.5;
+            case "comico":
+                return 7.0;
+            case "epico":
+                return 8.5;
+            case "inquietante":
+                return 10.0;
+            default:
+                return 4.0; //valore neutro va bene bilanciato
         }
     }
 
@@ -504,12 +575,18 @@ public class Main {
         }
 
         switch (violenza.toLowerCase()) {
-            case "pertutti": return 1.0;
-            case "lieve": return 3.0;
-            case "moderato": return 5.0;
-            case "esplicito": return 7.0;
-            case "estremo": return 9.0;
-            default: return 5.0; // valore neutro va bene moderato
+            case "pertutti":
+                return 1.0;
+            case "lieve":
+                return 3.0;
+            case "moderato":
+                return 5.0;
+            case "esplicito":
+                return 7.0;
+            case "estremo":
+                return 9.0;
+            default:
+                return 5.0; // valore neutro va bene moderato
         }
     }
 
@@ -567,15 +644,13 @@ public class Main {
             // Il degreeOfSupport è il valore (0.0 - 1.0) che "taglia" il grafico di uscita
             double level = r.getDegreeOfSupport();
 
-            if(level > 0){
+            if (level > 0) {
                 System.out.println("La regola si è attivata con forza: " + level);
                 System.out.println("Regola: " + r);
             }
         }
         Variable outputVariable = fisTone.getFunctionBlock("calcolo_affinita").getVariable("affinita");
         JFuzzyChart.get().chart(outputVariable, outputVariable.getDefuzzifier(), true);
-
-
 
 
         fileName = "src/intensita.fcl";
@@ -597,15 +672,13 @@ public class Main {
             // Il degreeOfSupport è il valore (0.0 - 1.0) che "taglia" il grafico di uscita
             double level = r.getDegreeOfSupport();
 
-            if(level > 0){
+            if (level > 0) {
                 System.out.println("La regola si è attivata con forza: " + level);
                 System.out.println("Regola: " + r);
             }
         }
         Variable outputVariable1 = fisIntensita.getFunctionBlock("calcolo_affinita").getVariable("affinita");
         JFuzzyChart.get().chart(outputVariable1, outputVariable1.getDefuzzifier(), true);
-
-
 
 
         fileName = "src/violenza.fcl";
@@ -627,15 +700,13 @@ public class Main {
             // Il degreeOfSupport è il valore (0.0 - 1.0) che "taglia" il grafico di uscita
             double level = r.getDegreeOfSupport();
 
-            if(level > 0){
+            if (level > 0) {
                 System.out.println("La regola si è attivata con forza: " + level);
                 System.out.println("Regola: " + r);
             }
         }
         Variable outputVariable3 = fisViolenza.getFunctionBlock("calcolo_affinita").getVariable("affinita");
         JFuzzyChart.get().chart(outputVariable3, outputVariable3.getDefuzzifier(), true);
-
-
 
 
         fileName = "src/tempo.fcl";
@@ -657,15 +728,13 @@ public class Main {
             // Il degreeOfSupport è il valore (0.0 - 1.0) che "taglia" il grafico di uscita
             double level = r.getDegreeOfSupport();
 
-            if(level > 0){
+            if (level > 0) {
                 System.out.println("La regola si è attivata con forza: " + level);
                 System.out.println("Regola: " + r);
             }
         }
         Variable outputVariable4 = fisTempo.getFunctionBlock("calcolo_affinita").getVariable("affinita");
         JFuzzyChart.get().chart(outputVariable4, outputVariable4.getDefuzzifier(), true);
-
-
 
 
         fileName = "src/finale.fcl";
@@ -687,15 +756,13 @@ public class Main {
             // Il degreeOfSupport è il valore (0.0 - 1.0) che "taglia" il grafico di uscita
             double level = r.getDegreeOfSupport();
 
-            if(level > 0){
+            if (level > 0) {
                 System.out.println("La regola si è attivata con forza: " + level);
                 System.out.println("Regola: " + r);
             }
         }
         Variable outputVariable5 = fisFinale.getFunctionBlock("calcolo_affinita").getVariable("affinita");
         JFuzzyChart.get().chart(outputVariable5, outputVariable5.getDefuzzifier(), true);
-
-
 
 
         fileName = "src/complessitaNarrativa.fcl";
@@ -717,15 +784,13 @@ public class Main {
             // Il degreeOfSupport è il valore (0.0 - 1.0) che "taglia" il grafico di uscita
             double level = r.getDegreeOfSupport();
 
-            if(level > 0){
+            if (level > 0) {
                 System.out.println("La regola si è attivata con forza: " + level);
                 System.out.println("Regola: " + r);
             }
         }
         Variable outputVariable6 = fisComplessita.getFunctionBlock("calcolo_affinita").getVariable("affinita");
         JFuzzyChart.get().chart(outputVariable6, outputVariable6.getDefuzzifier(), true);
-
-
 
 
         fileName = "src/realismo.fcl";
@@ -747,7 +812,7 @@ public class Main {
             // Il degreeOfSupport è il valore (0.0 - 1.0) che "taglia" il grafico di uscita
             double level = r.getDegreeOfSupport();
 
-            if(level > 0){
+            if (level > 0) {
                 System.out.println("La regola si è attivata con forza: " + level);
                 System.out.println("Regola: " + r);
             }
@@ -760,28 +825,42 @@ public class Main {
     //serve per cancellare le finestre create da jfuzzychart perchè non vengono "catturate"
     // le finestre che apre la libreria
 
-    private static void chiudiFinestre()     {
+    private static void chiudiFinestre() {
         for (Window window : Window.getWindows()) {
-        // Controlliamo se la finestra è visibile
-        if (window.isDisplayable()) {
-            // Se vuoi evitare di chiudere la finestra principale,
-            // metti il titolo della tua app qui sotto
-            String titolo = "";
-            if (window instanceof Frame) titolo = ((Frame) window).getTitle();
-            if (window instanceof Dialog) titolo = ((Dialog) window).getTitle();
+            // Controlliamo se la finestra è visibile
+            if (window.isDisplayable()) {
+                // Se vuoi evitare di chiudere la finestra principale,
+                // metti il titolo della tua app qui sotto
+                String titolo = "";
 
-            // Chiudi tutto ciò che NON è la tua finestra principale
-            // Sostituisci "MiaApp" con il titolo del tuo programma
-           //if (!titolo.equals("TitoloDellaTuaFinestraPrincipale")) {
-                window.setVisible(false);
-                window.dispose();
-          //  }
+                if (window instanceof Frame) {
+                    titolo = ((Frame) window).getTitle();
+                } else if (window instanceof Dialog) {
+                    titolo = ((Dialog) window).getTitle();
+                }
+
+                // Chiudi solo le finestre dei grafici JFuzzyChart
+                // Queste finestre hanno titoli specifici come "Variable: affinita", "FunctionBlock", etc.
+                // NON chiudere i dialog di input che hanno titoli come "Input", "Select", "Message", etc.
+                boolean isGraficoFuzzy = titolo.isEmpty(); // Le finestre dei grafici spesso hanno titolo vuoto
+
+                boolean isDialogInput = titolo.contains("Input") ||
+                        titolo.contains("Select") ||
+                        titolo.contains("Debug") ||
+                        titolo.contains("Message");
+
+                // Chiudi solo se è un grafico fuzzy E NON è un dialog di input
+                if (isGraficoFuzzy && !isDialogInput) {
+                    window.setVisible(false);
+                    window.dispose();
+                }
+            }
         }
     }
-}
-
-
-
-
 
 }
+
+
+
+
+
