@@ -37,15 +37,15 @@ public class Main {
                     databaseFilm.add(new Film(values[0], values[1], Integer.parseInt(values[2]), values[3], values[4], values[5], values[6], values[7]));
                 }
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, "Errore lettura CSV: " + e.getMessage());
+                JOptionPane.showMessageDialog(null, "Error reading CSV file: " + e.getMessage());
                 return;
             }
 
             //Chiedo se volgio visualizzare i grafici
             int rispostaGrafici = JOptionPane.showConfirmDialog(
                     null,
-                    "Vuoi visualizzare i grafici della logica Fuzzy?",
-                    "Debug Grafici",
+                    "Do you want to visualize the fuzzy logic graphs?",
+                    "Graphs",
                     JOptionPane.YES_NO_OPTION
             );
 
@@ -54,7 +54,7 @@ public class Main {
             String fileName = "src/tone.fcl";
             FIS fisTone = FIS.load(fileName, true);
             if (fisTone == null) {
-                System.err.println("Errore caricamento FCL");
+                System.err.println("Error loading FCL file:" + fileName);
                 return;
             }
 
@@ -66,14 +66,14 @@ public class Main {
 
 
             //Input utente Tono
-            String[] options = {"dark", "serio", "bilanciato", "leggero", "comico", "epico", "inquietante"};
+            String[] options = {"dark", "serious", "balanced", "lighthearted", "comic", "epic", "disturbing"};
             String TONO_USER = "";
 
             while(!Arrays.asList(options).contains(TONO_USER)){
                 TONO_USER = (String) JOptionPane.showInputDialog(
                         null,
-                        "Scegli il tono del film:",
-                        "Input Tono",
+                        "Choose the preferred film tone:",
+                        "Input Tone",
                         JOptionPane.QUESTION_MESSAGE,
                         null,
                         options,
@@ -105,14 +105,14 @@ public class Main {
 
                 double idealIndex = fisTone.getVariable("affinita_tono").getValue();
                 scoreTone.add(idealIndex);
-                System.out.println(film.getTitolo() + " -> score tono: " + idealIndex);
+                System.out.println(film.getTitolo() + " -> score tone: " + idealIndex);
 
                 if (idealIndex > topT) {
                     topT = idealIndex;
                     topTone = film.getTitolo() + " -> score: " + idealIndex;
                 }
             }
-            System.out.print("Miglior film in base al tono: ");
+            System.out.print("Best film based on tone: ");
             System.out.println(topTone + "\n");
 
 
@@ -120,7 +120,7 @@ public class Main {
             fileName = "src/intensita.fcl";
             FIS fisIntensita = FIS.load(fileName, true);
             if (fisIntensita == null) {
-                System.err.println("Errore caricamento FCL");
+                System.err.println("Error loading FCL file");
                 return;
             }
 
@@ -130,7 +130,7 @@ public class Main {
             }
 
             // Input Utente intensita
-            Double INTENSITA_USER = richiediInput("Che intensità vuoi che abbia?", 10.0);
+            Double INTENSITA_USER = richiediInput("How intense do you want the movie to be?", 10.0);
             if(INTENSITA_USER == null) break;
             else fisIntensita.setVariable("intensita", INTENSITA_USER);
 
@@ -156,7 +156,7 @@ public class Main {
                     topIntensita = film.getTitolo() + " -> score: " + idealIndex;
                 }
             }
-            System.out.print("Miglior film in base all'intensità: ");
+            System.out.print("Best film based on intensità: ");
             System.out.println(topIntensita + "\n");
 
 
@@ -164,7 +164,7 @@ public class Main {
             fileName = "src/violenza.fcl";
             FIS fisViolenza = FIS.load(fileName, true);
             if (fisViolenza == null) {
-                System.err.println("Errore caricamento FCL");
+                System.err.println("Error loading FCL file");
                 return;
             }
 
@@ -174,14 +174,14 @@ public class Main {
             }
 
             //Input utente violenza
-            String[] optionsViolenza = {"perTutti", "lieve", "moderato", "forte", "estremo"};
+            String[] optionsViolenza = {"forEverybody", "low", "moderate", "explicit", "extreme"};
             String VIOLENZA_USER = "";
 
             while(!Arrays.asList(optionsViolenza).contains(VIOLENZA_USER)){
                 VIOLENZA_USER = (String) JOptionPane.showInputDialog(
                         null,
-                        "Che livello di violenza accetti?",
-                        "Input Violenza",
+                        "How violent do you want the movie to be?",
+                        "Input Violence",
                         JOptionPane.QUESTION_MESSAGE,
                         null,
                         optionsViolenza,
@@ -219,7 +219,7 @@ public class Main {
                     topViolenza = film.getTitolo() + " -> score: " + idealIndex;
                 }
             }
-            System.out.print("Miglior film in base alla violenza: ");
+            System.out.print("Best film based on violence: ");
             System.out.println(topViolenza + "\n");
 
 
@@ -227,7 +227,7 @@ public class Main {
             fileName = "src/tempo.fcl";
             FIS fisTempo = FIS.load(fileName, true);
             if (fisTempo == null) {
-                System.err.println("Errore caricamento FCL");
+                System.err.println("Error loading FCL file");
                 return;
             }
 
@@ -237,7 +237,7 @@ public class Main {
             }
 
             // Input Utente tempo
-            Double TEMPO_USER = richiediInput("Quanti minuti hai a disposizione?", 240.0);
+            Double TEMPO_USER = richiediInput("How much time do you have available? (in minutes)", 240.0);
             if (TEMPO_USER == null) break;
             else fisTempo.setVariable("tempo_a_disposizione", TEMPO_USER);
 
@@ -263,7 +263,7 @@ public class Main {
                     topTempo = film.getTitolo() + " -> score: " + idealIndex;
                 }
             }
-            System.out.print("Miglior film in base alla durata: ");
+            System.out.print("Best film based on duration: ");
             System.out.println(topTempo + "\n");
 
 
@@ -271,7 +271,7 @@ public class Main {
             fileName = "src/finale.fcl";
             FIS fisFinale = FIS.load(fileName, true);
             if (fisFinale == null) {
-                System.err.println("Errore caricamento FCL");
+                System.err.println("Error loading FCL file");
                 return;
             }
 
@@ -281,7 +281,7 @@ public class Main {
             }
 
             // Input Utente finale
-            Double FINALE_USER = richiediInput("Quanto emozionante vuoi il finale?", 10.0);
+            Double FINALE_USER = richiediInput("How emotional do you want the movie ending to be?", 10.0);
             if (FINALE_USER == null) break;
             else fisFinale.setVariable("intensita_emozioni_post_film", FINALE_USER);
 
@@ -307,7 +307,7 @@ public class Main {
                     topFinale = film.getTitolo() + " -> score: " + idealIndex;
                 }
             }
-            System.out.print("Miglior film in base al finale: ");
+            System.out.print("Best film based on film ending: ");
             System.out.println(topFinale + "\n");
 
 
@@ -315,7 +315,7 @@ public class Main {
             fileName = "src/complessitaNarrativa.fcl";
             FIS fisComplessita = FIS.load(fileName, true);
             if (fisComplessita == null) {
-                System.err.println("Errore caricamento FCL");
+                System.err.println("Error loading FCL file");
                 return;
             }
 
@@ -325,7 +325,7 @@ public class Main {
             }
 
             // Input Utente complessita
-            Double COMPLESSITA_USER = richiediInput("Quanto complessa vuoi la trama?", 10.0);
+            Double COMPLESSITA_USER = richiediInput("How complex do you want the movie plot to be?", 10.0);
             if(COMPLESSITA_USER == null) break;
             else fisComplessita.setVariable("complessita", COMPLESSITA_USER);
 
@@ -351,7 +351,7 @@ public class Main {
                     topComplessita = film.getTitolo() + " -> score: " + idealIndex;
                 }
             }
-            System.out.print("Miglior film in base alla complessita: ");
+            System.out.print("Best film based on plot complexity: ");
             System.out.println(topComplessita + "\n");
 
 
@@ -359,7 +359,7 @@ public class Main {
             fileName = "src/realismo.fcl";
             FIS fisRealismo = FIS.load(fileName, true);
             if (fisRealismo == null) {
-                System.err.println("Errore caricamento FCL");
+                System.err.println("Error loading FCL file");
                 return;
             }
 
@@ -369,7 +369,7 @@ public class Main {
             }
 
             // Input Utente realismo
-            Double REALISMO_USER = richiediInput("Quanto vuoi fantasioso il film?", 10.0);
+            Double REALISMO_USER = richiediInput("How fantastical do you want the movie to be?", 10.0);
             if(REALISMO_USER == null) break;
             else fisRealismo.setVariable("fantasia", REALISMO_USER);
 
@@ -395,7 +395,7 @@ public class Main {
                     topRealismo = film.getTitolo() + " -> score: " + idealIndex;
                 }
             }
-            System.out.print("Miglior film in base alla fantasia: ");
+            System.out.print("Best film based on fantasy: ");
             System.out.println(topRealismo + "\n");
 
 
@@ -424,7 +424,7 @@ public class Main {
 
             //ORDINO DATABASE E STAMPO CLASSIFICA
             Collections.sort(databaseFilm);
-            System.out.println("\n--- CLASSIFICA FILM ---");
+            System.out.println("\n--- FILM RANKING ---");
             int i = 1;
             for (Film f : databaseFilm) {
                 if (f.getScore() > 0) { //non mostro quelli con score nullo
@@ -440,17 +440,17 @@ public class Main {
             //Cercare altro film
             int risposta = JOptionPane.showConfirmDialog(
                     null,
-                    "Vuoi cercare un altro film?",
-                    "Nuova Ricerca",
+                    "Do you want to repeat the process?",
+                    "New Research",
                     JOptionPane.YES_NO_OPTION
             );
 
             if (risposta == JOptionPane.NO_OPTION) {
                 continuaRicerca = false;
-                System.out.println("\nBuona visione!");
+                System.out.println("\n Enjoy the movie!");
                 chiudiFinestre();
             } else {
-                System.out.println("NUOVA RICERCA");
+                System.out.println("NEW RESEARCH");
                 chiudiFinestre();
             }
 
@@ -481,14 +481,14 @@ public class Main {
         }
 
         return switch (categoria.toLowerCase()) {
-            case "drammatico" -> 0.5;
-            case "animazione" -> 1.5;
+            case "dramatic" -> 0.5;
+            case "animation" -> 1.5;
             case "romance" -> 2.5;
-            case "commedia" -> 3.5;
+            case "commedy" -> 3.5;
             case "thriller" -> 4.5;
             case "horror" -> 5.5;
-            case "azione" -> 6.5;
-            case "avventura" -> 7.5;
+            case "action" -> 6.5;
+            case "adventure" -> 7.5;
             case "scifi" -> 8.5;
             case "fantasy" -> 9.5;
             default -> 3.5; // valore neutro è commedia
@@ -503,11 +503,11 @@ public class Main {
         }
 
         return switch (categoria.toLowerCase()) {
-            case "lieto" -> 0.5;
-            case "triste" -> 1.5;
-            case "malinconico" -> 2.5;
-            case "teso" -> 3.5;
-            default -> 1.0; // valore neutro tra lieto e triste
+            case "happy" -> 0.5;
+            case "sad" -> 1.5;
+            case "melancholic" -> 2.5;
+            case "tense" -> 3.5;
+            default -> 1.0; // valore neutro tra happy e sad
         };
     }
 
@@ -519,11 +519,11 @@ public class Main {
         }
 
         return switch (complessita.toLowerCase()) {
-            case "semplice" -> 1.0;
-            case "lineare" -> 3.0;
-            case "intricata" -> 5.0;
-            case "cerebrale" -> 7.0;
-            default -> 4.0; // valore neutro è tra lineare e intricato
+            case "simple" -> 1.0;
+            case "linear" -> 3.0;
+            case "intricate" -> 5.0;
+            case "cerebral" -> 7.0;
+            default -> 4.0; // valore neutro è tra linear e intricate
         };
     }
 
@@ -535,11 +535,11 @@ public class Main {
         }
 
         return switch (realismo.toLowerCase()) {
-            case "realistico" -> 0.5;
-            case "stilizzato" -> 1.5;
-            case "surreale" -> 2.5;
+            case "realistic" -> 0.5;
+            case "stylized" -> 1.5;
+            case "surreal" -> 2.5;
             case "fantasy" -> 3.5;
-            default -> 2.0; // valore neutro è tra stilizzato e surreale
+            default -> 2.0; // valore neutro è tra stylized e surreal
         };
     }
 
@@ -552,13 +552,13 @@ public class Main {
 
         return switch (tono.toLowerCase()) {
             case "dark" -> 1.0;
-            case "serio" -> 2.5;
-            case "bilanciato" -> 4.0;
-            case "leggero" -> 5.5;
-            case "comico" -> 7.0;
-            case "epico" -> 8.5;
-            case "inquietante" -> 10.0;
-            default -> 4.0; //valore neutro va bene bilanciato
+            case "serious" -> 2.5;
+            case "balanced" -> 4.0;
+            case "lighthearted" -> 5.5;
+            case "comic" -> 7.0;
+            case "epic" -> 8.5;
+            case "disturbing" -> 10.0;
+            default -> 4.0; //valore neutro va bene balanced
         };
     }
 
@@ -570,12 +570,12 @@ public class Main {
         }
 
         return switch (violenza.toLowerCase()) {
-            case "pertutti" -> 1.0;
-            case "lieve" -> 3.0;
-            case "moderato" -> 5.0;
-            case "esplicito" -> 7.0;
-            case "estremo" -> 9.0;
-            default -> 5.0; // valore neutro va bene moderato
+            case "foreverybody" -> 1.0;
+            case "low" -> 3.0;
+            case "moderate" -> 5.0;
+            case "explicit" -> 7.0;
+            case "extreme" -> 9.0;
+            default -> 5.0; // valore neutro va bene moderate
         };
     }
 
@@ -587,7 +587,7 @@ public class Main {
         // 2. DOMANDA SPECIFICA
         int sceltaSpecifica = JOptionPane.showConfirmDialog(
                 null,
-                "Vuoi visualizzare i grafici per: " + nomeFis + "?",
+                "Do you want to visualize " + nomeFis + " graphs?",
                 "Debug: " + nomeFis,
                 JOptionPane.YES_NO_OPTION
         );
@@ -804,15 +804,13 @@ public class Main {
 
 //forzo la chiusura delle finestre dei grafici
     private static void chiudiFinestre() {
-        // Usiamo invokeLater per evitare il deadlock (blocco del programma)
+        // Usiamo invokeLater per evitare il deadlock
         SwingUtilities.invokeLater(() -> {
-            // Cicla su TUTTE le finestre attive nell'applicazione (senza filtri sul tipo)
             for (Window window : Window.getWindows()) {
-                // Se la finestra è ancora gestita dal sistema
                 if (window.isDisplayable()) {
-                    // 1. La rendiamo invisibile subito (così sparisce alla vista istantaneamente)
+                    // La rendiamo invisibile subito (così sparisce alla vista istantaneamente)
                     window.setVisible(false);
-                    // 2. Liberiamo le risorse
+                    // Liberiamo le risorse
                     window.dispose();
                 }
             }
@@ -824,21 +822,21 @@ public class Main {
     private static void mostraRisultatoFinale(Film best, List<Film> classifica) {
         // Costruisco il messaggio con il film migliore
         StringBuilder messaggio = new StringBuilder();
-        messaggio.append("🎬 IL TUO FILM IDEALE È:\n\n");
+        messaggio.append("🎬 YOUR IDEAL MOVIE IS:\n\n");
         messaggio.append("━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
         messaggio.append("📽️  ").append(best.getTitolo()).append("\n");
         messaggio.append("━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
         messaggio.append("📊 Score: ").append(String.format("%.2f", best.getScore())).append("\n");
-        messaggio.append("🎭 Categoria: ").append(best.getCategoria()).append("\n");
-        messaggio.append("⏱️  Durata: ").append(best.getDurata()).append(" minuti\n");
-        messaggio.append("🎨 Tono: ").append(best.getTono()).append("\n");
-        messaggio.append("🎯 Complessità: ").append(best.getComplessita()).append("\n");
-        messaggio.append("✨ Realismo: ").append(best.getRealismo()).append("\n");
-        messaggio.append("🎬 Finale: ").append(best.getFinale()).append("\n");
-        messaggio.append("⚠️  Contenuti: ").append(best.getContenutiEspliciti()).append("\n\n");
+        messaggio.append("🎭 Category: ").append(best.getCategoria()).append("\n");
+        messaggio.append("⏱️ Duration: ").append(best.getDurata()).append(" minutes\n");
+        messaggio.append("🎨 Tone: ").append(best.getTono()).append("\n");
+        messaggio.append("🎯 Complexity: ").append(best.getComplessita()).append("\n");
+        messaggio.append("✨ Realism: ").append(best.getRealismo()).append("\n");
+        messaggio.append("🎬 Ending: ").append(best.getFinale()).append("\n");
+        messaggio.append("⚠️ Explicit Content: ").append(best.getContenutiEspliciti()).append("\n\n");
 
         // Aggiungo la top
-        messaggio.append("🏆 TOP RACCOMANDAZIONI:\n");
+        messaggio.append("🏆 TOP PICKS:\n");
         messaggio.append("━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
         int i = 1;
         for (Film f : classifica) {
@@ -849,13 +847,13 @@ public class Main {
             }
         }
 
-        messaggio.append("\n🍿 BUONA VISIONE! 🍿");
+        messaggio.append("\n🍿 ENJOY THE MOVIE! 🍿");
 
         // Mostra il dialog
         JOptionPane.showMessageDialog(
                 null,
                 messaggio.toString(),
-                "🎉 Raccomandazione Film",
+                "🎉 TOP PICKS",
                 JOptionPane.INFORMATION_MESSAGE
         );
     }
@@ -866,7 +864,7 @@ public class Main {
         while (true) {
             String inputUser = JOptionPane.showInputDialog(messaggio + " (" + 0.0 + " - " + max + ")");
 
-            // Se l'utente preme Annulla
+            //operazione annullata
             if (inputUser == null) {
                 System.out.println("Operazione annullata per: " + messaggio);
                 return null; // Ritorniamo null per segnalare l'uscita
@@ -878,13 +876,11 @@ public class Main {
                 if (valore >= 0.0 && valore <= max) {
                     return valore; // Input valido, lo ritorniamo
                 } else {
-                    System.err.println("Numero fuori range (" + 0.0 + "-" + max + ")");
-                    // Opzionale: Mostra errore grafico
-                    // JOptionPane.showMessageDialog(null, "Inserisci un valore tra " + min + " e " + max);
+                    System.err.println("Number out of Range (" + 0.0 + "-" + max + ")");
                 }
 
             } catch (NumberFormatException e) {
-                System.err.println("Non è un numero valido: " + inputUser);
+                System.err.println("Not a Number: " + inputUser);
             }
         }
     }
